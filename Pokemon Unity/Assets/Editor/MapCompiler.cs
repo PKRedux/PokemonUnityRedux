@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MapCompiler : EditorWindow
 { 
     //private static int totalSprites = 2; // change depending on the total sprites in this batch!
-    [MenuItem("PK Unity/Compile Selected Map")]
+    [MenuItem("Pokémon Unity/Compile Selected Map")]
     static void Compile()
     {
         Debug.Log("Compiling map...");

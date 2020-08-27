@@ -2,6 +2,8 @@
 
 These tools are included to provide ease of use when using the framework.
 
+**They will be made obsolete when Redux is finished!**
+
 ## List of tools included
 
 * Animated Sprites Setup - Create animated sprites for use in battles and summary pages.
