@@ -56,8 +56,8 @@ public class MapCollider : MonoBehaviour
     {
         collisionMap = new int[width, length];
 
-        int x = 0;
-        int z = 0;
+        //int x = 0;
+        //int z = 0;
         //contains is an array of every segment of the shorthand
         // (e.g. {"0x10", "2", "1x4", "2", "0x8", "0x10", "2", etc... } )
         string[] contains = shorthandCollisionMap.Split(' ');

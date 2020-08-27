@@ -27,7 +27,7 @@ public class PlayerData
 public class SceneActivity : MonoBehaviour
 {
     // TODO: Maybe move some of this to the player's scripts?
-    public PlayerData playerData;
+    public PlayerData playerData = new PlayerData();
     private GameObject playerObject;
     void OnDestroy()
     {
@@ -216,36 +216,33 @@ public class SceneActivity : MonoBehaviour
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "startup")
         {
-            if (GlobalScript.global != null)
+            playerObject = GameObject.Find("Player");
+            if (playerData.fadeIn)
             {
-                playerObject = GameObject.Find("Player");
-                if (GlobalScript.global.fadeIn)
-                {
-                    StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.slowedSpeed));
+                StartCoroutine(ScreenFade.main.Fade(true, ScreenFade.slowedSpeed));
 
-                    //if fading in to the scene.
-                    playerObject.transform.position = playerData.playerPosition;
-                    Player.player.direction = (CharacterBase.Direction)playerData.playerDirection;
-                    if (!playerData.respawning)
-                    {
-                        Player.player.pauseInput(0.6f);
-                    }
-                    else
-                    {
-                        Player.player.pauseInput(0.4f);
-                    }
-                    if (playerData.playerForwardOnLoad)
-                    {
-                        Player.player.forceMoveForward();
-                        playerData.playerForwardOnLoad = false;
-                    }
+                //if fading in to the scene.
+                playerObject.transform.position = playerData.playerPosition;
+                Player.player.direction = (CharacterBase.Direction)playerData.playerDirection;
+                if (!playerData.respawning)
+                {
+                    Player.player.pauseInput(0.6f);
                 }
                 else
                 {
-                    ScreenFade.main.SetToFadedIn();
+                    Player.player.pauseInput(0.4f);
                 }
-                Player.player.followerScript.changeFollower(playerData.followerIndex);
+                if (playerData.playerForwardOnLoad)
+                {
+                    Player.player.forceMoveForward();
+                    playerData.playerForwardOnLoad = false;
+                }
             }
+            else
+            {
+                ScreenFade.main.SetToFadedIn();
+            }
+            Player.player.followerScript.changeFollower(playerData.followerIndex);
         }
     }
 

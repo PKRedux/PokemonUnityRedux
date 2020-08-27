@@ -9,11 +9,7 @@ namespace PokemonUnity.Frontend.Global {
 public class GlobalScript : MonoBehaviour
 {
     public static GlobalScript global;
-    public bool fadeIn = false;
-    public bool forgetOnLoad = false;
-    public Hashtable globalVariables;
-    public List<GameObject> globalObjects;
-    public GameObject Player;
+    public SceneActivity sceneActivity;
     void OnDestroy()
     {
         //SceneManager.sceneLoaded -= CheckLevelLoaded;
@@ -26,6 +22,7 @@ public class GlobalScript : MonoBehaviour
             global = this;
             Object.DontDestroyOnLoad(this.gameObject);
             Display.updateResolution();
+            sceneActivity = gameObject.AddComponent<SceneActivity>();
         }
         else if (global != this)
         {

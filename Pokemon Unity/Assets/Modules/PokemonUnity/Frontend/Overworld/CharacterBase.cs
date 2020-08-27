@@ -11,7 +11,6 @@ using System;
 namespace PokemonUnity.Frontend.Overworld {
 public class CharacterBase : MonoBehaviour
 {
-    public string spritePrefix = "OverworldNPCSprites/";
     public string spriteName;
     public bool busy = true;
     public enum Direction
@@ -41,7 +40,7 @@ public class CharacterBase : MonoBehaviour
         pawnSprite = transform.Find("Pawn").GetComponent<SpriteRenderer>();
         pawnReflectionSprite = transform.Find("PawnReflection").GetComponent<SpriteRenderer>();
         hitBox = transform.Find("Character_Object");
-        spriteSheet = Resources.LoadAll<Sprite>(spritePrefix + spriteName);
+        spriteSheet = Resources.LoadAll<Sprite>("OverworldNPCSprites/" + spriteName);
     }
 
     public virtual void Start()
