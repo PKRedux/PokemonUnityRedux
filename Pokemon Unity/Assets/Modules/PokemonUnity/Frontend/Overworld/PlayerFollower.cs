@@ -292,7 +292,7 @@ public class PlayerFollower : CharacterBase
                 yield return
                     Dialog.StartCoroutine(Dialog.DrawText(
                         SaveData.currentSave.PC.boxes[0][followerIndex].getName() +
-                        " is enjoying walking around \\out of their ball."));
+                        " is enjoying walking around out of their ball."));
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                 {
                     yield return null;

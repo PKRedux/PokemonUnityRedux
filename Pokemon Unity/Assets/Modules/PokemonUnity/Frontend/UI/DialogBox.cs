@@ -118,12 +118,13 @@ public class DialogBox : MonoBehaviour
     {
         char[] chars = word.ToCharArray();
         float startTime = Time.time;
+        bool noProcess = false;
         if (chars.Length > 0)
         {
             //ensure no blank words get processed
-
             if (chars[0] == '\\')
             {
+                noProcess = true;
                 //Apply Operator
                 switch (chars[1])
                 {
@@ -151,6 +152,9 @@ public class DialogBox : MonoBehaviour
                     case ('n'): //New Line
                         dialogBoxText.text += "\n";
                         break;
+                    default: //Unknown
+                        noProcess = false;
+                        break;
                 }
                 if (chars.Length > 2)
                 {
@@ -163,7 +167,7 @@ public class DialogBox : MonoBehaviour
                     yield return StartCoroutine(DrawWord(remainingWord, large, bold, italic, secPerChar));
                 }
             }
-            else
+            if(!noProcess)
             {
                 //Draw Word
                 string currentText = dialogBoxText.text;

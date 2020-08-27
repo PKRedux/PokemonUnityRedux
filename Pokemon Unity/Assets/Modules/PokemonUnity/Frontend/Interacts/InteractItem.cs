@@ -105,7 +105,7 @@ public class InteractItem : MonoBehaviour
                     yield return
                         Dialog.StartCoroutine(Dialog.DrawTextSilent(
                             SaveData.currentSave.playerName + " put the TM" + ItemDatabase.getItem(item).getTMNo() +
-                            " \\away into the bag."));
+                            " away into the bag."));
                 }
                 else
                 {
@@ -113,13 +113,13 @@ public class InteractItem : MonoBehaviour
                     {
                         yield return
                             Dialog.StartCoroutine(Dialog.DrawTextSilent(
-                                SaveData.currentSave.playerName + " put the " + item + "s \\away into the bag."));
+                                SaveData.currentSave.playerName + " put the " + item + "s away into the bag."));
                     }
                     else
                     {
                         yield return
                             Dialog.StartCoroutine(Dialog.DrawTextSilent(
-                                SaveData.currentSave.playerName + " put the " + item + " \\away into the bag."));
+                                SaveData.currentSave.playerName + " put the " + item + " away into the bag."));
                     }
                 }
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))

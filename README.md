@@ -9,6 +9,8 @@ The plan is to make modules depend on C#'s derivative system, using namespaces, 
 
 This project is built around Pokémon Unity's legacy code and is currently unfinished.
 
+Please use Unity 2019.4.9f1 before publishing changes.
+
 ## Credits
 
 * [Pokémon Unity Legacy](https://github.com/PokemonUnity/PokemonUnity/tree/master)
