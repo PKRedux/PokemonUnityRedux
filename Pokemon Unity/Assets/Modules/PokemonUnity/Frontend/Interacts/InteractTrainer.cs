@@ -607,23 +607,23 @@ public class InteractTrainer : MonoBehaviour
                 /*StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
 
                 //Automatic LoopStart usage not yet implemented
-                UIScene.main.Battle.gameObject.SetActive(true);
+                SceneScript.main.Battle.gameObject.SetActive(true);
                 if (trainer.battleBGM != null)
                 {
                     BgmHandler.main.PlayOverlay(trainer.battleBGM, trainer.samplesLoopStart);
                 }
                 else
                 {
-                    BgmHandler.main.PlayOverlay(UIScene.main.Battle.defaultTrainerBGM,
-                        UIScene.main.Battle.defaultTrainerBGMLoopStart);
+                    BgmHandler.main.PlayOverlay(SceneScript.main.Battle.defaultTrainerBGM,
+                        SceneScript.main.Battle.defaultTrainerBGMLoopStart);
                 }
-                UIScene.main.Battle.gameObject.SetActive(false);
+                SceneScript.main.Battle.gameObject.SetActive(false);
                 yield return new WaitForSeconds(1.6f);
 
-                UIScene.main.Battle.gameObject.SetActive(true);
-                StartCoroutine(UIScene.main.Battle.control(trainer));
+                SceneScript.main.Battle.gameObject.SetActive(true);
+                StartCoroutine(SceneScript.main.Battle.control(trainer));
 
-                while (UIScene.main.Battle.gameObject.activeSelf)
+                while (SceneScript.main.Battle.gameObject.activeSelf)
                 {
                     yield return null;
                 }
@@ -631,7 +631,7 @@ public class InteractTrainer : MonoBehaviour
                 //yield return new WaitForSeconds(sceneTransition.FadeIn(0.4f));
                 yield return StartCoroutine(ScreenFade.main.Fade(true, 0.4f));
 
-                if (UIScene.main.Battle.victor == 0)
+                if (SceneScript.main.Battle.victor == 0)
                 {
                     defeated = true;
                     recentlyDefeated = true;

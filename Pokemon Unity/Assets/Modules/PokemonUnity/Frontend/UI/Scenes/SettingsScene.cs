@@ -4,8 +4,8 @@
 /// Contributors: TeamPopplio
 using UnityEngine;
 using UnityEngine.UI;
-namespace PokemonUnity.Frontend.UI {
-public class SettingsScene : MonoBehaviour
+namespace PokemonUnity.Frontend.UI.Scenes {
+public class SettingsScene : BaseScene
 {
     private DialogBox Dialog;
 

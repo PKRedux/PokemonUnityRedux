@@ -4,7 +4,7 @@
 /// Contributors: TeamPopplio
 using UnityEngine;
 namespace PokemonUnity.Frontend.UI.Scenes {
-public class PCScene : MonoBehaviour
+public class PCScene : BaseScene
 {
 }
 }

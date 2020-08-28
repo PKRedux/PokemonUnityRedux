@@ -283,16 +283,17 @@ public class Player : CharacterBase
                     //open Pause Menu
                     if (moving || Input.GetButtonDown("Start"))
                     {
-                        if (setCheckBusyWith(UIScene.main.Pause.gameObject))
+                        if (setCheckBusyWith(SceneScript.main.Pause.gameObject))
                         {
                             animPause = true;
-                            UIScene.main.Pause.gameObject.SetActive(true);
-                            //StartCoroutine(UIScene.main.Pause.control());
-                            while (UIScene.main.Pause.gameObject.activeSelf)
+                            SceneScript.main.Pause.gameObject.SetActive(true);
+                            StartCoroutine(SceneScript.main.Pause.control());
+                            yield return new WaitForSeconds(1f);
+                            while (SceneScript.main.Pause.gameObject.activeSelf)
                             {
                                 yield return null;
                             }
-                            unsetCheckBusyWith(UIScene.main.Pause.gameObject);
+                            unsetCheckBusyWith(SceneScript.main.Pause.gameObject);
                         }
                     }
                 }
@@ -1030,19 +1031,19 @@ public class Player : CharacterBase
         {
             if (UnityEngine.Random.value <= accessedMapSettings.getEncounterProbability())
             {
-                if (setCheckBusyWith(UIScene.main.Battle.gameObject))
+                if (setCheckBusyWith(SceneScript.main.Battle.gameObject))
                 {
-                    BgmHandler.main.PlayOverlay(UIScene.main.Battle.defaultWildBGM,
-                        UIScene.main.Battle.defaultWildBGMLoopStart);
+                    BgmHandler.main.PlayOverlay(SceneScript.main.Battle.defaultWildBGM,
+                        SceneScript.main.Battle.defaultWildBGMLoopStart);
 
                     //SceneTransition sceneTransition = Dialog.transform.GetComponent<SceneTransition>();
 
                     yield return StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
                     //yield return new WaitForSeconds(sceneTransition.FadeOut(1f));
-                    UIScene.main.Battle.gameObject.SetActive(true);
-                    //StartCoroutine(UIScene.main.Battle.control(accessedMapSettings.getRandomEncounter(encounterLocation)));
+                    SceneScript.main.Battle.gameObject.SetActive(true);
+                    //StartCoroutine(SceneScript.main.Battle.control(accessedMapSettings.getRandomEncounter(encounterLocation)));
 
-                    while (UIScene.main.Battle.gameObject.activeSelf)
+                    while (SceneScript.main.Battle.gameObject.activeSelf)
                     {
                         yield return null;
                     }
@@ -1050,7 +1051,7 @@ public class Player : CharacterBase
                     //yield return new WaitForSeconds(sceneTransition.FadeIn(0.4f));
                     yield return StartCoroutine(ScreenFade.main.Fade(true, 0.4f));
 
-                    unsetCheckBusyWith(UIScene.main.Battle.gameObject);
+                    unsetCheckBusyWith(SceneScript.main.Battle.gameObject);
                 }
             }
         }

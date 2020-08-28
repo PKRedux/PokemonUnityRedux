@@ -5,7 +5,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 namespace PokemonUnity.Frontend.UI.Scenes {
-public class MainMenuScene : MonoBehaviour
+public class MainMenuScene : BaseScene
 {
     public int selectedButton = 0;
     public int selectedFile = 0;

@@ -4,7 +4,7 @@
 /// Contributors: TeamPopplio
 using UnityEngine;
 namespace PokemonUnity.Frontend.UI.Scenes {
-public class EvolutionScene : MonoBehaviour
+public class EvolutionScene : BaseScene
 {
 }
 }

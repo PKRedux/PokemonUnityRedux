@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using PokemonUnity.Frontend.UI;
 namespace PokemonUnity.Frontend.UI.Scenes {
-public class BagScene : MonoBehaviour
+public class BagScene : BaseScene
 {
 }
 }

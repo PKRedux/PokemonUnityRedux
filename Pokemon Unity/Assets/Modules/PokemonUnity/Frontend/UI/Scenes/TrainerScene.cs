@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using PokemonUnity.Backend.Serializables;
-namespace PokemonUnity.Frontend.UI {
+namespace PokemonUnity.Frontend.UI.Scenes {
 
-public class TrainerScene : MonoBehaviour
+public class TrainerScene : BaseScene
 {
     private DialogBox Dialog;
 

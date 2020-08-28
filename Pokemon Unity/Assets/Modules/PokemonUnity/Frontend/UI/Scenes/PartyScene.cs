@@ -8,7 +8,7 @@ using System.Collections;
 using PokemonUnity.Frontend.UI;
 using PokemonUnity.Backend.Serializables;
 namespace PokemonUnity.Frontend.UI.Scenes {
-public class PartyScene : MonoBehaviour
+public class PartyScene : BaseScene
 {
 }
 }

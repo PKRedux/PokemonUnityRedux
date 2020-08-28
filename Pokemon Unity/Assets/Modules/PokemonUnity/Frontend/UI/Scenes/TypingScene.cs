@@ -6,8 +6,8 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using PokemonUnity.Backend.Serializables;
-namespace PokemonUnity.Frontend.UI {
-public class TypingScene : MonoBehaviour
+namespace PokemonUnity.Frontend.UI.Scenes {
+public class TypingScene : BaseScene
 {
     public string typedString;
 
