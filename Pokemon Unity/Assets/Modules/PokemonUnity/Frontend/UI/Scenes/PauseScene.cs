@@ -22,7 +22,9 @@ namespace PokemonUnity.Frontend.UI.Scenes {
 public class PauseCarousel {
     public Image[] icons;
     public Image[] references;
-    public int position; //start at pokedex -> 0
+    public int position;
+    public int selectedPosition;
+    public PositionedImage selectedImage;
 }
 [System.Serializable]
 public class PauseSetup {
@@ -100,10 +102,6 @@ public class PauseScene : BaseScene
         Open,
         Closing
     }
-    private int lastPosition;
-    private int selectedPosition;
-    private int nextPosition;
-    private int[] carouselIndexes;
     public PauseSetup setup;
 
     public PauseState state = PauseState.Closed;
@@ -118,10 +116,14 @@ public class PauseScene : BaseScene
         setup.selectArrow.gameObject.SetActive(false);
         //setSelectedText("");
 
-        selectedPosition = 0;
-
+        setup.carousel.position = 0;
+        setup.carousel.icons = new Image[setup.carousel.references.Length];
+        for(int i = 0; i < setup.carousel.references.Length;i++)
+        {
+            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,transform.Find("Carousel"));
+            setup.carousel.icons[i] = Instantiate(instance.GetComponent<Image>());
+        }
         setup.saveDataDisplay.gameObject.SetActive(false);
-        carouselIndexes = new int[setup.carousel.icons.Length];
     }
     private void setSelectedText(string text)
     {
@@ -150,21 +152,28 @@ public class PauseScene : BaseScene
         setup.pauseBottom.gameObject.SetActive(false);
         state = PauseState.Closed;
     }
-    public int wrapAround(int i, int limit, int start)
-    {
-        if(i >= limit)
-            return start;
-        else if(i < start)
-            return limit-1;
-        return i;
+    public enum WrapState {
+        Negative,
+        Positive,
+        TimesTwo
     }
-    public IEnumerator shiftIcon(int index)
+    public IEnumerator shiftIcon(int index,int direction)
     {
         Image icon = setup.carousel.icons[index];
-        Image icon2 = setup.carousel.references[wrapAround(index+1,setup.carousel.icons.Length,0)];
+        //icon.transform.SetSiblingIndex(direction*-1);
+        Image icon2;
+        if(index+direction >= setup.carousel.references.Length)
+            icon2 = setup.carousel.references[0];
+        else if(index+direction < 0)
+            icon2 = setup.carousel.references[setup.carousel.references.Length-1];
+        else
+            icon2 = setup.carousel.references[index+direction];
+        icon.gameObject.SetActive(true);
+        icon2.gameObject.SetActive(false);
+        Debug.Log("Directioned: "+(index+direction)+"; Non: "+index);
         float speed = 250f;
         Debug.Log(icon.rectTransform.anchoredPosition.x);
-        Debug.Log(icon.rectTransform.anchoredPosition.x);
+        Debug.Log(icon2.rectTransform.anchoredPosition.x);
         Debug.Log("BUFFER");
         while(icon.rectTransform.anchoredPosition.x != icon2.rectTransform.anchoredPosition.x) {
             icon.rectTransform.anchoredPosition = Vector3.MoveTowards(icon.rectTransform.anchoredPosition, icon2.rectTransform.anchoredPosition, Time.deltaTime * speed);
@@ -174,25 +183,50 @@ public class PauseScene : BaseScene
             icon.rectTransform.sizeDelta = toberounded;
             yield return null;
         }
+        icon2.sprite = icon.sprite;
+        icon.gameObject.SetActive(false);
+        icon2.gameObject.SetActive(true);
         yield return null;
     }
     public IEnumerator updatePosition(float direction)
     {
-        selectedPosition = wrapAround(selectedPosition+(direction > 0 ? 1 : -1),pauseIcons.Length,0);
-        setSelectedText(pauseIcons[selectedPosition].name);
-        setup.selectArrow.rectTransform.anchoredPosition = pauseIcons[selectedPosition].position;
-        //visual
+        if(setup.carousel.selectedPosition+1 >= pauseIcons.Length)
+            setup.carousel.selectedPosition = 0;
+        else if(setup.carousel.selectedPosition+1 < 0)
+            setup.carousel.selectedPosition = pauseIcons.Length-1;
+        else
+            setup.carousel.selectedPosition++;
+        setup.carousel.selectedImage = pauseIcons[setup.carousel.selectedPosition];
+        setSelectedText(setup.carousel.selectedImage.name);
+        setup.selectArrow.rectTransform.anchoredPosition = pauseIcons[setup.carousel.position].position;
         for(int i = 0; i < setup.carousel.icons.Length; i++)
         {
-            yield return StartCoroutine(shiftIcon(setup.carousel.position));
+            PositionedImage repIcon;
+            if(setup.carousel.position >= pauseIcons.Length)
+                repIcon = pauseIcons[0];
+            else if(setup.carousel.position < 0)
+                repIcon = pauseIcons[(pauseIcons.Length-1)];
+            else
+                repIcon = pauseIcons[setup.carousel.position];
+            if(setup.carousel.position == setup.carousel.icons.Length-1)
+                yield return StartCoroutine(shiftIcon(setup.carousel.position,(direction > 0 ? 1 : -1)));
+            else
+                yield return StartCoroutine(shiftIcon(setup.carousel.position,(direction > 0 ? 1 : -1)));
+            setup.carousel.icons[i].sprite = repIcon.image;
             setup.carousel.position++;
             yield return null;
+        }
+        setup.carousel.icons = new Image[setup.carousel.references.Length];
+        for(int i = 0; i < setup.carousel.references.Length;i++)
+        {
+            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,setup.carousel.references[i].transform);
+            setup.carousel.icons[i] = Instantiate(instance.GetComponent<Image>());
         }
         setup.carousel.position = 0;
     }
     public IEnumerator control()
     {
-        selectedPosition = 0;
+        setup.carousel.position = 0;
         setSelectedText("");
         SfxHandler.Play(setup.openClip);
         yield return StartCoroutine(openAnim());
@@ -207,14 +241,14 @@ public class PauseScene : BaseScene
             }
             else if (Input.GetButton("Select"))
             {
-                switch(pauseIcons[selectedPosition].mode) {
+                switch(pauseIcons[setup.carousel.position].mode) {
                     case ImageMode.RunScene:
                         SfxHandler.Play(setup.selectClip);
                         yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
-                        yield return StartCoroutine(runSceneUntilDeactivated(SceneScript.main.CastToScene(pauseIcons[selectedPosition].scene)));
+                        yield return StartCoroutine(runSceneUntilDeactivated(SceneScript.main.CastToScene(pauseIcons[setup.carousel.position].scene)));
                         break;
                     case ImageMode.RunEvent:
-                        pauseIcons[selectedPosition].activatorEvent.Invoke();
+                        pauseIcons[setup.carousel.position].activatorEvent.Invoke();
                         break;
                     case ImageMode.Save:
                         setup.saveDataDisplay.gameObject.SetActive(true);
@@ -307,7 +341,7 @@ public class PauseScene : BaseScene
     private void enableAll()
     {
        //setSelectedText("");
-       //selectedPosition = 0;
+       //position = 0;
        setup.pauseBottom.gameObject.SetActive(true);
        setup.selectArrow.gameObject.SetActive(true);
     }
