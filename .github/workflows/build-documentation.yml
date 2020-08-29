@@ -6,23 +6,26 @@ on:
 jobs:
   build:
     name: Build documentation
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout documentation branch
       uses: actions/checkout@v1
       with:
         ref: documentation
+        path: docs
     - name: Checkout master branch
       uses: actions/checkout@v1
       with:
         ref: master
-        path: src
+        path: docs/src
+    - name: Change directory
+      run: cd ..
     - uses: nikeee/docfx-action@v1.0.0
       name: Build documentation
       with:
-        args: docfx.json
+        args: docs/docfx.json
     - uses: maxheld83/ghpages@master
       name: Publish documentation
       env:
-        BUILD_DIR: _site
+        BUILD_DIR: docs/_site
         GH_PAT: ${{ secrets.GH_PAT }}
