@@ -34,7 +34,6 @@ public class PauseSetup {
     public Image selectArrow;
     public Text mapName;
     public Text dataText;
-    public DialogBox Dialog;
     public AudioSource PauseAudio;
     public AudioClip selectClip;
     public AudioClip openClip;
@@ -120,8 +119,8 @@ public class PauseScene : BaseScene
         setup.carousel.icons = new Image[setup.carousel.references.Length];
         for(int i = 0; i < setup.carousel.references.Length;i++)
         {
-            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,transform.Find("Carousel"));
-            setup.carousel.icons[i] = Instantiate(instance.GetComponent<Image>());
+            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,setup.pauseBottom.transform.Find("Carousel"));
+            setup.carousel.icons[i] = instance.GetComponent<Image>();
         }
         setup.saveDataDisplay.gameObject.SetActive(false);
     }
@@ -159,22 +158,21 @@ public class PauseScene : BaseScene
     }
     public IEnumerator shiftIcon(int index,int direction)
     {
-        Image icon = setup.carousel.icons[index];
-        //icon.transform.SetSiblingIndex(direction*-1);
         Image icon2;
-        if(index+direction >= setup.carousel.references.Length)
+        if(setup.carousel.position+(direction > 0 ? 1 : -1) >= setup.carousel.references.Length)
             icon2 = setup.carousel.references[0];
-        else if(index+direction < 0)
+        else if(setup.carousel.position+(direction > 0 ? 1 : -1) < 0)
             icon2 = setup.carousel.references[setup.carousel.references.Length-1];
         else
-            icon2 = setup.carousel.references[index+direction];
-        icon.gameObject.SetActive(true);
-        icon2.gameObject.SetActive(false);
+            icon2 = setup.carousel.references[setup.carousel.position+(direction > 0 ? 1 : -1)];
+        Image icon = setup.carousel.icons[index];
+        //icon.transform.SetSiblingIndex(direction*-1);
         Debug.Log("Directioned: "+(index+direction)+"; Non: "+index);
         float speed = 250f;
-        Debug.Log(icon.rectTransform.anchoredPosition.x);
-        Debug.Log(icon2.rectTransform.anchoredPosition.x);
-        Debug.Log("BUFFER");
+        if(index >= setup.carousel.references.Length-1)
+            speed = 999f;
+        if(index == 0)
+            speed = 999f;
         while(icon.rectTransform.anchoredPosition.x != icon2.rectTransform.anchoredPosition.x) {
             icon.rectTransform.anchoredPosition = Vector3.MoveTowards(icon.rectTransform.anchoredPosition, icon2.rectTransform.anchoredPosition, Time.deltaTime * speed);
             Vector2 toberounded = Vector2.MoveTowards(icon.rectTransform.sizeDelta, icon2.rectTransform.sizeDelta, Time.deltaTime * speed);
@@ -184,50 +182,54 @@ public class PauseScene : BaseScene
             yield return null;
         }
         icon2.sprite = icon.sprite;
-        icon.gameObject.SetActive(false);
-        icon2.gameObject.SetActive(true);
         yield return null;
     }
     public IEnumerator updatePosition(float direction)
     {
-        if(setup.carousel.selectedPosition+1 >= pauseIcons.Length)
+        setup.carousel.position = 0;
+        if(setup.carousel.selectedPosition+(direction > 0 ? 1 : -1) >= pauseIcons.Length)
             setup.carousel.selectedPosition = 0;
-        else if(setup.carousel.selectedPosition+1 < 0)
+        else if(setup.carousel.selectedPosition+(direction > 0 ? 1 : -1) < 0)
             setup.carousel.selectedPosition = pauseIcons.Length-1;
         else
-            setup.carousel.selectedPosition++;
+            setup.carousel.selectedPosition += (direction > 0 ? 1 : -1);
         setup.carousel.selectedImage = pauseIcons[setup.carousel.selectedPosition];
         setSelectedText(setup.carousel.selectedImage.name);
-        setup.selectArrow.rectTransform.anchoredPosition = pauseIcons[setup.carousel.position].position;
-        for(int i = 0; i < setup.carousel.icons.Length; i++)
+        setup.carousel.references[0].transform.parent.gameObject.SetActive(false);
+        setup.carousel.icons[0].sprite = setup.carousel.icons[setup.carousel.references.Length-2].sprite;
+        setup.carousel.icons[setup.carousel.references.Length-1].sprite = setup.carousel.icons[1].sprite;
+        for(int i = 0; i < setup.carousel.references.Length; i++)
         {
             PositionedImage repIcon;
-            if(setup.carousel.position >= pauseIcons.Length)
+            if(setup.carousel.selectedPosition >= pauseIcons.Length)
                 repIcon = pauseIcons[0];
-            else if(setup.carousel.position < 0)
+            else if(setup.carousel.selectedPosition < 0)
                 repIcon = pauseIcons[(pauseIcons.Length-1)];
             else
-                repIcon = pauseIcons[setup.carousel.position];
-            if(setup.carousel.position == setup.carousel.icons.Length-1)
-                yield return StartCoroutine(shiftIcon(setup.carousel.position,(direction > 0 ? 1 : -1)));
-            else
-                yield return StartCoroutine(shiftIcon(setup.carousel.position,(direction > 0 ? 1 : -1)));
-            setup.carousel.icons[i].sprite = repIcon.image;
+                repIcon = pauseIcons[setup.carousel.selectedPosition];
+            StartCoroutine(shiftIcon(setup.carousel.position,(direction > 0 ? -1 : 1)));
             setup.carousel.position++;
             yield return null;
+        }
+        yield return new WaitForSeconds(0.25f);
+        setup.carousel.references[0].transform.parent.gameObject.SetActive(true);
+        foreach(Image img in setup.carousel.icons)
+        {
+            Destroy(img.gameObject);
         }
         setup.carousel.icons = new Image[setup.carousel.references.Length];
         for(int i = 0; i < setup.carousel.references.Length;i++)
         {
-            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,setup.carousel.references[i].transform);
-            setup.carousel.icons[i] = Instantiate(instance.GetComponent<Image>());
+
+            GameObject instance = Instantiate(setup.carousel.references[i].gameObject,setup.pauseBottom.transform.Find("Carousel"));
+            setup.carousel.icons[i] = instance.GetComponent<Image>();
         }
         setup.carousel.position = 0;
     }
     public IEnumerator control()
     {
         setup.carousel.position = 0;
-        setSelectedText("");
+        setSelectedText("Bag");
         SfxHandler.Play(setup.openClip);
         yield return StartCoroutine(openAnim());
         state = PauseState.Open; //set elsewhere not just here
@@ -235,13 +237,12 @@ public class PauseScene : BaseScene
         {
             if (Input.GetAxisRaw("Horizontal") != 0)
             {
-                StartCoroutine(updatePosition(Input.GetAxisRaw("Horizontal")));
                 SfxHandler.Play(setup.selectClip);
-                yield return new WaitForSeconds(0.2f);
+                yield return StartCoroutine(updatePosition(Input.GetAxisRaw("Horizontal")));
             }
             else if (Input.GetButton("Select"))
             {
-                switch(pauseIcons[setup.carousel.position].mode) {
+                switch(pauseIcons[setup.carousel.selectedPosition].mode) {
                     case ImageMode.RunScene:
                         SfxHandler.Play(setup.selectClip);
                         yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
@@ -276,10 +277,10 @@ public class PauseScene : BaseScene
                                         "0" + "\n" + //pokedex not yet implemented
                                         playerTime;
 
-                        setup.Dialog.DrawDialogBox();
-                        yield return StartCoroutine(setup.Dialog.DrawText("Would you like to save the game?"));
-                        yield return StartCoroutine(setup.Dialog.DrawChoiceBox(0));
-                        int chosenIndex = setup.Dialog.chosenIndex;
+                        SceneScript.main.Dialog.DrawDialogBox();
+                        yield return StartCoroutine(SceneScript.main.Dialog.DrawText("Would you like to save the game?"));
+                        yield return StartCoroutine(SceneScript.main.Dialog.DrawChoiceBox(0));
+                        int chosenIndex = SceneScript.main.Dialog.chosenIndex;
                         if (chosenIndex == 1)
                         {
                             //update save file
@@ -292,16 +293,16 @@ public class PauseScene : BaseScene
                             NonResettingHandler.saveDataToGlobal();
 
                             SaveLoad.Save();
-                            setup.Dialog.DrawDialogBox();
+                            SceneScript.main.Dialog.DrawDialogBox();
                             yield return
-                                StartCoroutine(setup.Dialog.DrawText(SaveData.currentSave.playerName + " saved the game!"));
+                                StartCoroutine(SceneScript.main.Dialog.DrawText(SaveData.currentSave.playerName + " saved the game!"));
                             while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                             {
                                 yield return null;
                             }
                         }
-                        setup.Dialog.UnDrawDialogBox();
-                        setup.Dialog.UndrawChoiceBox();
+                        SceneScript.main.Dialog.UnDrawDialogBox();
+                        SceneScript.main.Dialog.UndrawChoiceBox();
                         setup.saveDataDisplay.gameObject.SetActive(false);
                         yield return new WaitForSeconds(0.2f);
                         break;

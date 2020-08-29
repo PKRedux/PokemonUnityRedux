@@ -7,11 +7,10 @@ using System.Collections;
 using PokemonUnity.Frontend.UI;
 using PokemonUnity.Backend.Serializables;
 using PokemonUnity.Backend.Databases;
+using PokemonUnity.Frontend.UI.Scenes;
 namespace PokemonUnity.Frontend.Overworld {
 public class PlayerFollower : CharacterBase
 {
-    public static PlayerFollower follower;
-    private DialogBox Dialog;
     private Player Player;
 
     private Vector3 startPosition;
@@ -46,7 +45,6 @@ public class PlayerFollower : CharacterBase
     // Use this for initialization
     public override void Awake()
     {
-        Dialog = GameObject.Find("GUI").GetComponent<DialogBox>();
         Player = Player.player;
 
         pawn = transform.Find("Pawn");
@@ -288,16 +286,16 @@ public class PlayerFollower : CharacterBase
                     direction = Direction.Up;
                 }
 
-                Dialog.DrawDialogBox();
+                SceneScript.main.Dialog.DrawDialogBox();
                 yield return
-                    Dialog.StartCoroutine(Dialog.DrawText(
+                    SceneScript.main.Dialog.StartCoroutine(SceneScript.main.Dialog.DrawText(
                         SaveData.currentSave.PC.boxes[0][followerIndex].getName() +
                         " is enjoying walking around out of their ball."));
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                 {
                     yield return null;
                 }
-                Dialog.UnDrawDialogBox();
+                SceneScript.main.Dialog.UnDrawDialogBox();
                 yield return new WaitForSeconds(0.2f);
                 Player.unsetCheckBusyWith(this.gameObject);
             }

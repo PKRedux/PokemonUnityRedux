@@ -17,7 +17,6 @@ namespace PokemonUnity.Frontend.Overworld {
 public class Player : CharacterBase
 {
     public static Player player;
-    private DialogBox Dialog;
     private MapNameBoxHandler MapName;
 
     //before a script runs, it'll check if the player is busy with another script's GameObject.
@@ -80,8 +79,7 @@ public class Player : CharacterBase
         //set up the reference to this script.
         player = this;
 
-        Dialog = GameObject.Find("GUI").GetComponent<DialogBox>();
-        MapName = GameObject.Find("GUI").GetComponent<MapNameBoxHandler>();
+        //MapName = GameObject.Find("MapName").GetComponent<MapNameBoxHandler>();
 
         canInput = true;
         speed = walkSpeed;
@@ -953,18 +951,18 @@ public class Player : CharacterBase
             {
                 if (setCheckBusyWith(this.gameObject))
                 {
-                    Dialog.DrawDialogBox();
+                    SceneScript.main.Dialog.DrawDialogBox();
                     yield return
-                        Dialog.StartCoroutine(Dialog.DrawText("The water is dyed a deep blue. Would you \nlike to surf on it?"));
-                    Dialog.DrawChoiceBox();
-                    //yield return Dialog.StartCoroutine(Dialog.ChoiceNavigate());
-                    Dialog.UndrawChoiceBox();
-                    int chosenIndex = Dialog.chosenIndex;
+                        SceneScript.main.Dialog.StartCoroutine(SceneScript.main.Dialog.DrawText("The water is dyed a deep blue. Would you \nlike to surf on it?"));
+                    SceneScript.main.Dialog.DrawChoiceBox();
+                    //yield return SceneScript.main.Dialog.StartCoroutine(SceneScript.main.Dialog.ChoiceNavigate());
+                    SceneScript.main.Dialog.UndrawChoiceBox();
+                    int chosenIndex = SceneScript.main.Dialog.chosenIndex;
                     if (chosenIndex == 1)
                     {
-                        Dialog.DrawDialogBox();
+                        SceneScript.main.Dialog.DrawDialogBox();
                         yield return
-                            Dialog.StartCoroutine(Dialog.DrawText(targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance("Surf") + "!"));
+                            SceneScript.main.Dialog.StartCoroutine(SceneScript.main.Dialog.DrawText(targetPokemon.getName() + " used " + targetPokemon.getFirstFEInstance("Surf") + "!"));
                         while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                         {
                             yield return null;
@@ -1003,7 +1001,7 @@ public class Player : CharacterBase
                         updateAnimation("surf", walkFPS);
                         speed = surfSpeed;
                     }
-                    Dialog.UnDrawDialogBox();
+                    SceneScript.main.Dialog.UnDrawDialogBox();
                     unsetCheckBusyWith(this.gameObject);
                 }
             }
@@ -1012,13 +1010,13 @@ public class Player : CharacterBase
         {
             if (setCheckBusyWith(this.gameObject))
             {
-                Dialog.DrawDialogBox();
-                yield return Dialog.StartCoroutine(Dialog.DrawText("The water is dyed a deep blue."));
+                SceneScript.main.Dialog.DrawDialogBox();
+                yield return SceneScript.main.Dialog.StartCoroutine(SceneScript.main.Dialog.DrawText("The water is dyed a deep blue."));
                 while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
                 {
                     yield return null;
                 }
-                Dialog.UnDrawDialogBox();
+                SceneScript.main.Dialog.UnDrawDialogBox();
                 unsetCheckBusyWith(this.gameObject);
             }
         }
@@ -1036,7 +1034,7 @@ public class Player : CharacterBase
                     BgmHandler.main.PlayOverlay(SceneScript.main.Battle.defaultWildBGM,
                         SceneScript.main.Battle.defaultWildBGMLoopStart);
 
-                    //SceneTransition sceneTransition = Dialog.transform.GetComponent<SceneTransition>();
+                    //SceneTransition sceneTransition = SceneScript.main.Dialog.transform.GetComponent<SceneTransition>();
 
                     yield return StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
                     //yield return new WaitForSeconds(sceneTransition.FadeOut(1f));

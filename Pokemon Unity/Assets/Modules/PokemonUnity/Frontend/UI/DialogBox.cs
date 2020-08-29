@@ -40,30 +40,38 @@ public class DialogBox : MonoBehaviour
     void Awake()
     {
         Transform dialogBoxTrn = transform.Find("DialogBox");
-        dialogBox = dialogBoxTrn.GetComponent<Image>();
-        dialogBoxText = dialogBoxTrn.Find("BoxText").GetComponent<Text>();
-        dialogBoxTextShadow = dialogBoxTrn.Find("BoxTextShadow").GetComponent<Text>();
-        dialogBoxBorder = dialogBoxTrn.Find("BoxBorder").GetComponent<Image>();
+        // HACK: fix this from not breaking at line 46 due to scenescript integration
+        if(transform.Find("DialogBox"))
+        {
+            dialogBox = dialogBoxTrn.GetComponent<Image>();
+            dialogBoxText = dialogBoxTrn.Find("BoxText").GetComponent<Text>();
+            dialogBoxTextShadow = dialogBoxTrn.Find("BoxTextShadow").GetComponent<Text>();
+            dialogBoxBorder = dialogBoxTrn.Find("BoxBorder").GetComponent<Image>();
 
-        Transform choiceBoxTrn = transform.Find("ChoiceBox");
-        choiceBox = choiceBoxTrn.GetComponent<Image>();
-        choiceBoxText = choiceBoxTrn.Find("BoxText").GetComponent<Text>();
-        choiceBoxTextShadow = choiceBoxTrn.Find("BoxTextShadow").GetComponent<Text>();
-        choiceBoxSelect = choiceBoxTrn.Find("BoxSelect").GetComponent<Image>();
+            Transform choiceBoxTrn = transform.Find("ChoiceBox");
+            choiceBox = choiceBoxTrn.GetComponent<Image>();
+            choiceBoxText = choiceBoxTrn.Find("BoxText").GetComponent<Text>();
+            choiceBoxTextShadow = choiceBoxTrn.Find("BoxTextShadow").GetComponent<Text>();
+            choiceBoxSelect = choiceBoxTrn.Find("BoxSelect").GetComponent<Image>();
 
-        defaultDialogLines = Mathf.RoundToInt((dialogBoxBorder.rectTransform.sizeDelta.y - 16f) / 14f);
-        defaultChoiceY = Mathf.FloorToInt(choiceBox.rectTransform.localPosition.y);
+            defaultDialogLines = Mathf.RoundToInt((dialogBoxBorder.rectTransform.sizeDelta.y - 16f) / 14f);
+            defaultChoiceY = Mathf.FloorToInt(choiceBox.rectTransform.localPosition.y);
+        }
     }
 
     void Start()
     {
-        if (hideDialogOnStart)
+        // HACK: fix this from not breaking at line 46 due to scenescript integration
+        if(transform.Find("DialogBox"))
         {
-            dialogBox.gameObject.SetActive(false);
-        }
-        if (hideChoiceOnStart)
-        {
-            choiceBox.gameObject.SetActive(false);
+            if (hideDialogOnStart)
+            {
+                dialogBox.gameObject.SetActive(false);
+            }
+            if (hideChoiceOnStart)
+            {
+                choiceBox.gameObject.SetActive(false);
+            }
         }
     }
 

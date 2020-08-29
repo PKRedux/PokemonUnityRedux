@@ -35,6 +35,7 @@ public class SceneScript : MonoBehaviour
     public SummaryScene Summary;
     public TrainerScene Trainer;
     public TypingScene Typing;
+    public DialogBox Dialog;
     public BaseScene CastToScene(SceneEnum caster)
     {
         switch(caster)
