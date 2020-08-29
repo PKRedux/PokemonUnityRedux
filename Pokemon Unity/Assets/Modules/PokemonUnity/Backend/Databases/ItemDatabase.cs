@@ -3,9 +3,15 @@
 /// Author: IIColour_Spectrum
 /// Contributors: TeamPopplio
 using UnityEngine;
-using System.Collections;
 using PokemonUnity.Backend.Datatypes;
 namespace PokemonUnity.Backend.Databases {
+/// <summary>
+/// Pokémon item database
+/// </summary>
+/// <remarks>
+/// This class may be replaced in the future.
+/// </remarks>
+/// <seealso cref="PokemonData"/>
 public static class ItemDatabase
 {
     //		Description Box Width 	(i is 0.2 width, l and space are 0.4 width, j is 0.6 width)

@@ -3,8 +3,14 @@
 /// Author: IIColour_Spectrum
 /// Contributors: TeamPopplio
 using UnityEngine;
-using System.Collections;
 namespace PokemonUnity.Backend.Datatypes {
+/// <summary>
+/// Pokémon datatype
+/// </summary>
+/// <remarks>
+/// This class may be replaced in the future.
+/// </remarks>
+/// <seealso cref="PokemonUnity.Backend.Databases.PokemonDatabase"/>
 public class PokemonData
 {
     private int ID;

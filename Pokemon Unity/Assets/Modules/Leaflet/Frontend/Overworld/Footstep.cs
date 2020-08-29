@@ -5,6 +5,9 @@
 using UnityEngine;
 using PokemonUnity.Frontend.Global;
 namespace Leaflet.Frontend.Overworld {
+/// <summary>
+/// Footstep sound class - MonoBehaviour
+/// </summary>
 public class Footstep : MonoBehaviour
 {
     private AudioSource walkSound;

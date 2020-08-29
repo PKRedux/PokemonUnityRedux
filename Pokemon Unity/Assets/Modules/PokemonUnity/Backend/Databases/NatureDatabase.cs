@@ -3,9 +3,15 @@
 /// Author: IIColour_Spectrum
 /// Contributors: TeamPopplio
 using UnityEngine;
-using System.Collections;
 using PokemonUnity.Backend.Datatypes;
 namespace PokemonUnity.Backend.Databases {
+/// <summary>
+/// Pokémon nature database
+/// </summary>
+/// <remarks>
+/// This class may be replaced in the future.
+/// </remarks>
+/// <seealso cref="PokemonData"/>
 public static class NatureDatabase
 {
     private static NatureData[] natures = new NatureData[]

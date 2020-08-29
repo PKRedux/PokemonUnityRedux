@@ -5,6 +5,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 namespace Leaflet.Frontend {
+/// <summary>
+/// UnityEvent invoker class - MonoBehaviour
+/// </summary>
 public class Invoker : MonoBehaviour
 {
     public InvokeType invokeMethod = InvokeType.awake;

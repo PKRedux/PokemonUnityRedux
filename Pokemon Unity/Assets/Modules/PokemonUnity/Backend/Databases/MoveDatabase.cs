@@ -2,10 +2,15 @@
 /// Purpose: Temporary move database from legacy for Pokémon Unity backend
 /// Author: IIColour_Spectrum
 /// Contributors: TeamPopplio
-using UnityEngine;
-using System.Collections;
 using PokemonUnity.Backend.Datatypes;
 namespace PokemonUnity.Backend.Databases {
+/// <summary>
+/// Pokémon move database
+/// </summary>
+/// <remarks>
+/// This class may be replaced in the future.
+/// </remarks>
+/// <seealso cref="PokemonData"/>
 public static class MoveDatabase
 {
     //Move Effects Name required. 0 if undefined paramater
