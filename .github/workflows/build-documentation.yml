@@ -23,9 +23,9 @@ jobs:
     - uses: nikeee/docfx-action@v1.0.0
       name: Build documentation
       with:
-        args: docfx.json
+        args: ./../docfx.json
     - uses: maxheld83/ghpages@master
       name: Publish documentation
       env:
-        BUILD_DIR: _site
+        BUILD_DIR: docs/_site
         GH_PAT: ${{ secrets.GH_PAT }}
