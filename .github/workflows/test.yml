@@ -23,6 +23,7 @@ jobs:
       # Cache
       - uses: actions/cache@v2.0.0
         with:
+          projectPath: PokemonUnity
           path: Library
           key: Library
 
@@ -31,7 +32,7 @@ jobs:
         id: testStep
         uses: webbertakken/unity-test-runner@v1.6
         with:
-          unityVersion: 2019.4.0f1
+          unityVersion: 2019.4.9f1
 
       # Output 
       - uses: actions/upload-artifact@v1

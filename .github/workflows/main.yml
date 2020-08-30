@@ -30,8 +30,9 @@ jobs:
       - name: Build project
         uses: webbertakken/unity-builder@v1.0
         with:
+          projectPath: PokemonUnity
           allowDirtyBuild: false
-          unityVersion: 2019.4.0f1
+          unityVersion: 2019.4.9f1
           targetPlatform: WebGL
 
       # Output 
