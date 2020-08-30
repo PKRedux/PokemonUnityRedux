@@ -55,7 +55,7 @@ public class DialogBox : MonoBehaviour
             choiceBoxSelect = choiceBoxTrn.Find("BoxSelect").GetComponent<Image>();
 
             defaultDialogLines = Mathf.RoundToInt((dialogBoxBorder.rectTransform.sizeDelta.y - 16f) / 14f);
-            defaultChoiceY = Mathf.FloorToInt(choiceBox.rectTransform.localPosition.y);
+            defaultChoiceY = Mathf.FloorToInt(choiceBox.rectTransform.anchoredPosition.y);
         }
     }
 
@@ -260,10 +260,10 @@ public class DialogBox : MonoBehaviour
             Mathf.Round((float) lines * 14f) + 16f);
         dialogBoxBorder.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x,
             dialogBox.rectTransform.sizeDelta.y);
-        dialogBoxText.rectTransform.localPosition = new Vector3(dialogBoxText.rectTransform.localPosition.x,
+        dialogBoxText.rectTransform.anchoredPosition = new Vector3(dialogBoxText.rectTransform.anchoredPosition.x,
             -37f + Mathf.Round((float) lines * 14f), 0);
-        dialogBoxTextShadow.rectTransform.localPosition = new Vector3(
-            dialogBoxTextShadow.rectTransform.localPosition.x, dialogBoxText.rectTransform.localPosition.y - 1f, 0);
+        dialogBoxTextShadow.rectTransform.anchoredPosition = new Vector3(
+            dialogBoxTextShadow.rectTransform.anchoredPosition.x, dialogBoxText.rectTransform.anchoredPosition.y - 1f, 0);
 
         if (sign)
         {
@@ -276,7 +276,7 @@ public class DialogBox : MonoBehaviour
                     increment = 1;
                 }
 
-                dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x,
+                dialogBox.rectTransform.anchoredPosition = new Vector2(dialogBox.rectTransform.anchoredPosition.x,
                     -dialogBox.rectTransform.sizeDelta.y + (dialogBox.rectTransform.sizeDelta.y * increment));
                 yield return null;
             }
@@ -339,9 +339,9 @@ public class DialogBox : MonoBehaviour
 
         choiceBox.gameObject.SetActive(true);
         choiceBox.sprite = Resources.Load<Sprite>("Frame/choice" + PlayerPrefs.GetInt("frameStyle"));
-        choiceBox.rectTransform.localPosition = new Vector3(171 - width - 1, yPosition - 96, 0);
+        choiceBox.rectTransform.anchoredPosition = new Vector3(342 - width - 1, yPosition, 0);
         choiceBox.rectTransform.sizeDelta = new Vector2(width, 16f + (14f * choices.Length));
-        choiceBoxSelect.rectTransform.localPosition = new Vector3(8, 9f + (14f * startIndex), 0);
+        choiceBoxSelect.rectTransform.anchoredPosition = new Vector3(8, 9f + (14f * startIndex), 0);
         choiceBoxText.rectTransform.sizeDelta = new Vector2(width - 30, choiceBox.rectTransform.sizeDelta.y);
         choiceBoxTextShadow.rectTransform.sizeDelta = new Vector2(choiceBoxText.rectTransform.sizeDelta.x,
             choiceBoxText.rectTransform.sizeDelta.y);
@@ -401,7 +401,7 @@ public class DialogBox : MonoBehaviour
             return false;
         }
         //Even if new index is the same as old, set the graphics in case of needing to override modified graphics.
-        choiceBoxSelect.rectTransform.localPosition = new Vector3(8, 9f + (14f * newIndex), 0);
+        choiceBoxSelect.rectTransform.anchoredPosition = new Vector3(8, 9f + (14f * newIndex), 0);
         if (flavourText != null)
         {
             DrawDialogBox();
@@ -434,7 +434,7 @@ public class DialogBox : MonoBehaviour
                 increment = 1;
             }
 
-            dialogBox.rectTransform.localPosition = new Vector2(dialogBox.rectTransform.localPosition.x,
+            dialogBox.rectTransform.anchoredPosition = new Vector2(dialogBox.rectTransform.anchoredPosition.x,
                 -dialogBox.rectTransform.sizeDelta.y * increment);
             yield return null;
         }

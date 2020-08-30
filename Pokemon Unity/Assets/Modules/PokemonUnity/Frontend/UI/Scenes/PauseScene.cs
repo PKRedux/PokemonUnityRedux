@@ -45,7 +45,7 @@ public class PositionedImage {
     public Sprite image;
     public Vector3 position;
     public string name;
-    public PauseScene.ImageMode mode = PauseScene.ImageMode.RunScene;
+    public PauseScene.ImageMode mode = PauseScene.ImageMode.NotImplemented;
     public SceneScript.SceneEnum scene;
     public UnityEvent activatorEvent;
 }
@@ -55,7 +55,8 @@ public class PauseScene : BaseScene
         None,
         RunScene,
         RunEvent,
-        Save
+        Save,
+        NotImplemented
     }
     public PositionedImage[] pauseIcons = new PositionedImage[]
     {
@@ -304,6 +305,16 @@ public class PauseScene : BaseScene
                         SceneScript.main.Dialog.UnDrawDialogBox();
                         SceneScript.main.Dialog.UndrawChoiceBox();
                         setup.saveDataDisplay.gameObject.SetActive(false);
+                        yield return new WaitForSeconds(0.2f);
+                        break;
+                    case ImageMode.NotImplemented:
+                        SceneScript.main.Dialog.DrawDialogBox();
+                        yield return StartCoroutine(SceneScript.main.Dialog.DrawText("This menu has not yet been implemented."));
+                        while (!Input.GetButtonDown("Select") && !Input.GetButtonDown("Back"))
+                        {
+                            yield return null;
+                        }
+                        SceneScript.main.Dialog.UnDrawDialogBox();
                         yield return new WaitForSeconds(0.2f);
                         break;
                 }
