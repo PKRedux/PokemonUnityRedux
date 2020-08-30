@@ -16,6 +16,7 @@ using PokemonUnity.Backend.FileIO;
 using PokemonUnity.Backend.Serializables;
 using System.Collections.Generic;
 using System;
+using TMPro;
 
 namespace PokemonUnity.Frontend.UI.Scenes {
 [System.Serializable]
@@ -32,8 +33,8 @@ public class PauseSetup {
     public Image pauseBottom;
     public Image saveDataDisplay;
     public Image selectArrow;
-    public Text mapName;
-    public Text dataText;
+    public TextMeshProUGUI mapName;
+    public TextMeshProUGUI dataText;
     public AudioSource PauseAudio;
     public AudioClip selectClip;
     public AudioClip openClip;
@@ -285,7 +286,7 @@ public class PauseScene : BaseScene
                         if (chosenIndex == 1)
                         {
                             //update save file
-                            //Dialog.UndrawChoiceBox();
+                            SceneScript.main.Dialog.UndrawChoiceBox();
                             SaveData.currentSave.levelName = SceneManager.GetActiveScene().name;
                             SaveData.currentSave.playerPosition = new SeriV3(Player.player.transform.position);
                             SaveData.currentSave.playerDirection = (int)Player.player.direction;
