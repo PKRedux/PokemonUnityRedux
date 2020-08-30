@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="Pokémon Unity Redux Logo" src="https://i.imgur.com/4GrFnm1.png"/>
+    <img alt="Pokémon Unity Redux Logo" src="https://i.imgur.com/rALvFgd.png"/>
     <h1 align="center">Pokémon Unity Redux</h3>
 </p>
 
