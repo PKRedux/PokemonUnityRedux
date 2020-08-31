@@ -12,12 +12,13 @@ public class DialogBox : MonoBehaviour
 {
     public string debugBoxString;
 
-    private Image dialogBox;
+    public Image dialogBox;
+    public Image dialogBoxWhite;
     private Text dialogBoxText;
     private Text dialogBoxTextShadow;
     private Image dialogBoxBorder;
 
-    private Image choiceBox;
+    public Image choiceBox;
     private Text choiceBoxText;
     private Text choiceBoxTextShadow;
     private Image choiceBoxSelect;
@@ -41,7 +42,7 @@ public class DialogBox : MonoBehaviour
     {
         Transform dialogBoxTrn = transform.Find("DialogBox");
         // HACK: fix this from not breaking at line 46 due to scenescript integration
-        if(transform.Find("DialogBox"))
+        if(dialogBoxTrn != null)
         {
             dialogBox = dialogBoxTrn.GetComponent<Image>();
             dialogBoxText = dialogBoxTrn.Find("BoxText").GetComponent<Text>();
@@ -62,7 +63,7 @@ public class DialogBox : MonoBehaviour
     void Start()
     {
         // HACK: fix this from not breaking at line 46 due to scenescript integration
-        if(transform.Find("DialogBox"))
+        if(transform.Find("DialogBox") != null)
         {
             if (hideDialogOnStart)
             {
@@ -74,7 +75,6 @@ public class DialogBox : MonoBehaviour
             }
         }
     }
-
 
     public IEnumerator DrawText(string text)
     {
@@ -250,15 +250,15 @@ public class DialogBox : MonoBehaviour
         dialogBoxBorder.sprite = (sign)
             ? null
             : Resources.Load<Sprite>("Frame/dialog" + PlayerPrefs.GetInt("frameStyle"));
-        dialogBox.sprite = (sign) ? Resources.Load<Sprite>("Frame/signBG") : Resources.Load<Sprite>("Frame/dialogBG");
-        dialogBox.color = tint;
+        dialogBoxWhite.sprite = (sign) ? Resources.Load<Sprite>("Frame/signBG") : Resources.Load<Sprite>("Frame/dialogBG");
+        dialogBoxWhite.color = tint;
         dialogBoxText.text = "";
         dialogBoxText.color = (sign) ? new Color(1f, 1f, 1f, 1f) : new Color(0.0625f, 0.0625f, 0.0625f, 1f);
         dialogBoxTextShadow.text = dialogBoxText.text;
 
         dialogBox.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x,
             Mathf.Round((float) lines * 14f) + 16f);
-        dialogBoxBorder.rectTransform.sizeDelta = new Vector2(dialogBox.rectTransform.sizeDelta.x,
+        dialogBoxBorder.rectTransform.sizeDelta = new Vector2(dialogBoxBorder.rectTransform.sizeDelta.x,
             dialogBox.rectTransform.sizeDelta.y);
         dialogBoxText.rectTransform.anchoredPosition = new Vector3(dialogBoxText.rectTransform.anchoredPosition.x,
             -37f + Mathf.Round((float) lines * 14f), 0);
@@ -339,7 +339,7 @@ public class DialogBox : MonoBehaviour
 
         choiceBox.gameObject.SetActive(true);
         choiceBox.sprite = Resources.Load<Sprite>("Frame/choice" + PlayerPrefs.GetInt("frameStyle"));
-        choiceBox.rectTransform.anchoredPosition = new Vector3(342 - width - 1, yPosition, 0);
+        choiceBox.rectTransform.anchoredPosition = new Vector3(0, yPosition, 0); //removed width here since I don't believe it is used?
         choiceBox.rectTransform.sizeDelta = new Vector2(width, 16f + (14f * choices.Length));
         choiceBoxSelect.rectTransform.anchoredPosition = new Vector3(8, 9f + (14f * startIndex), 0);
         choiceBoxText.rectTransform.sizeDelta = new Vector2(width - 30, choiceBox.rectTransform.sizeDelta.y);

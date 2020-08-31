@@ -32,7 +32,6 @@ public class PauseSetup {
     public PauseCarousel carousel;
     public Image pauseBottom;
     public Image saveDataDisplay;
-    public Image selectArrow;
     public TextMeshProUGUI mapName;
     public TextMeshProUGUI dataText;
     public AudioSource PauseAudio;
@@ -44,7 +43,6 @@ public class PauseSetup {
 [System.Serializable] //makes sure this shows up in the inspector
 public class PositionedImage {
     public Sprite image;
-    public Vector3 position;
     public string name;
     public PauseScene.ImageMode mode = PauseScene.ImageMode.NotImplemented;
     public SceneScript.SceneEnum scene;
@@ -114,7 +112,6 @@ public class PauseScene : BaseScene
     {
         setup.pauseBottom.rectTransform.anchoredPosition = new Vector3(0,-96f,0);
         setup.pauseBottom.gameObject.SetActive(false);
-        setup.selectArrow.gameObject.SetActive(false);
         //setSelectedText("");
 
         setup.carousel.position = 0;
@@ -145,7 +142,6 @@ public class PauseScene : BaseScene
     {
         state = PauseState.Closing;
         float speed = 200f;
-        setup.selectArrow.gameObject.SetActive(false);
         while(setup.pauseBottom.rectTransform.anchoredPosition.y > -96f && state == PauseState.Closing) {
             setup.pauseBottom.rectTransform.anchoredPosition = Vector3.MoveTowards(setup.pauseBottom.rectTransform.anchoredPosition, new Vector3(0,-96,0), Time.deltaTime * speed);
             yield return null;
@@ -349,14 +345,12 @@ public class PauseScene : BaseScene
     {
        //setSelectedText("");
        setup.pauseBottom.gameObject.SetActive(false);
-       setup.selectArrow.gameObject.SetActive(false);
     }
     private void enableAll()
     {
        //setSelectedText("");
        //position = 0;
        setup.pauseBottom.gameObject.SetActive(true);
-       setup.selectArrow.gameObject.SetActive(true);
     }
 }
 }
