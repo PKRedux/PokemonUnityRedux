@@ -6,16 +6,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using PokemonUnity.Frontend.UI.Scenes;
 using System.Collections;
 using PokemonUnity.Frontend.Overworld;
-using PokemonUnity.Frontend.UI;
 using PokemonUnity.Frontend.Global;
-using PokemonUnity.Backend.Datatypes;
 using PokemonUnity.Backend.FileIO;
 using PokemonUnity.Backend.Serializables;
-using System.Collections.Generic;
-using System;
 using TMPro;
 
 namespace PokemonUnity.Frontend.UI.Scenes {
@@ -57,6 +52,17 @@ public class PauseScene : BaseScene
         Save,
         NotImplemented
     }
+    public enum PauseState {
+        Closed,
+        Opening,
+        Open,
+        Closing
+    }
+    public enum WrapState {
+        Negative,
+        Positive,
+        TimesTwo
+    }
     public PositionedImage[] pauseIcons = new PositionedImage[]
     {
         new PositionedImage()
@@ -95,12 +101,6 @@ public class PauseScene : BaseScene
             mode = ImageMode.None
         },
     };
-    public enum PauseState {
-        Closed,
-        Opening,
-        Open,
-        Closing
-    }
     public PauseSetup setup;
 
     public PauseState state = PauseState.Closed;
@@ -112,7 +112,6 @@ public class PauseScene : BaseScene
     {
         setup.pauseBottom.rectTransform.anchoredPosition = new Vector3(0,-96f,0);
         setup.pauseBottom.gameObject.SetActive(false);
-        //setSelectedText("");
 
         setup.carousel.position = 0;
         setup.carousel.icons = new Image[setup.carousel.references.Length];
@@ -149,11 +148,6 @@ public class PauseScene : BaseScene
         setup.pauseBottom.gameObject.SetActive(false);
         state = PauseState.Closed;
     }
-    public enum WrapState {
-        Negative,
-        Positive,
-        TimesTwo
-    }
     public IEnumerator shiftIcon(int index,int direction)
     {
         Image icon2;
@@ -164,8 +158,6 @@ public class PauseScene : BaseScene
         else
             icon2 = setup.carousel.references[setup.carousel.position+(direction > 0 ? 1 : -1)];
         Image icon = setup.carousel.icons[index];
-        //icon.transform.SetSiblingIndex(direction*-1);
-        Debug.Log("Directioned: "+(index+direction)+"; Non: "+index);
         float speed = 250f;
         if(index >= setup.carousel.references.Length-1)
             speed = 999f;
@@ -173,10 +165,7 @@ public class PauseScene : BaseScene
             speed = 999f;
         while(icon.rectTransform.anchoredPosition.x != icon2.rectTransform.anchoredPosition.x) {
             icon.rectTransform.anchoredPosition = Vector3.MoveTowards(icon.rectTransform.anchoredPosition, icon2.rectTransform.anchoredPosition, Time.deltaTime * speed);
-            Vector2 toberounded = Vector2.MoveTowards(icon.rectTransform.sizeDelta, icon2.rectTransform.sizeDelta, Time.deltaTime * speed);
-            //toberounded.x = (float)Math.Ceiling(toberounded.x);
-            //toberounded.y = (float)Math.Ceiling(toberounded.y);
-            icon.rectTransform.sizeDelta = toberounded;
+            icon.rectTransform.sizeDelta = Vector2.MoveTowards(icon.rectTransform.sizeDelta, icon2.rectTransform.sizeDelta, Time.deltaTime * speed);
             yield return null;
         }
         icon2.sprite = icon.sprite;
@@ -343,13 +332,10 @@ public class PauseScene : BaseScene
     }
     private void disableAll()
     {
-       //setSelectedText("");
        setup.pauseBottom.gameObject.SetActive(false);
     }
     private void enableAll()
     {
-       //setSelectedText("");
-       //position = 0;
        setup.pauseBottom.gameObject.SetActive(true);
     }
 }

@@ -7,21 +7,24 @@ public class MapCompiler : EditorWindow
 { 
     //private static int totalSprites = 2; // change depending on the total sprites in this batch!
     [MenuItem("Pokémon Unity/Compile Selected Map")]
-    static void Compile()
+    static void CompileMenu()
+    {
+        Compile(Selection.activeGameObject);
+    }
+    public static void Compile(GameObject compileObj)
     {
         Debug.Log("Compiling map...");
         Mesh map = new Mesh();
-        if(!Selection.activeGameObject.transform.GetComponent<MeshFilter>())
+        if(!compileObj.transform.GetComponent<MeshFilter>())
         {
-            Selection.activeGameObject.AddComponent<MeshFilter>();
+            compileObj.AddComponent<MeshFilter>();
         }
-        if(!Selection.activeGameObject.transform.GetComponent<MeshCollider>())
+        if(!compileObj.transform.GetComponent<MeshCollider>())
         {
-            Selection.activeGameObject.AddComponent<MeshCollider>();
+            compileObj.AddComponent<MeshCollider>();
         }
-        Selection.activeGameObject.transform.GetComponent<MeshFilter>().mesh = null;
-        MeshFilter[] meshFilters = Selection.activeGameObject.transform.GetComponentsInChildren<MeshFilter>();
-        Debug.Log(meshFilters.Length);
+        compileObj.transform.GetComponent<MeshFilter>().mesh = null;
+        MeshFilter[] meshFilters = compileObj.transform.GetComponentsInChildren<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
         int i = 0;
         while (i < meshFilters.Length) {
@@ -30,13 +33,13 @@ public class MapCompiler : EditorWindow
             i++;
         }
 		map.CombineMeshes(combine);
-        Selection.activeGameObject.transform.GetComponent<MeshFilter>().sharedMesh = map;
-		Selection.activeGameObject.transform.GetComponent<MeshCollider>().sharedMesh = Selection.activeGameObject.transform.GetComponent<MeshFilter>().sharedMesh;
-        Selection.activeGameObject.SetActive(true);
+        compileObj.transform.GetComponent<MeshFilter>().sharedMesh = map;
+		compileObj.transform.GetComponent<MeshCollider>().sharedMesh = compileObj.transform.GetComponent<MeshFilter>().sharedMesh;
+        compileObj.SetActive(true);
     }
     // Validate the menu item defined by the function above.
     // The menu item will be disabled if this function returns false.
-    [MenuItem("PK Unity/Compile Selected Map", true)]
+    [MenuItem("Pokémon Unity/Compile Selected Map", true)]
     static bool ValidateCompile()
     {
         // Return false if no gameobject is selected.

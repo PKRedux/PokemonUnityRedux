@@ -13,6 +13,7 @@ public class Footstep : MonoBehaviour
     private AudioSource walkSound;
     public AudioClip walkClip;
     public bool stepOnAnyObject = false;
+    public Color gizmoColor;
 
     void Awake()
     {
@@ -28,6 +29,11 @@ public class Footstep : MonoBehaviour
                 SfxHandler.Play(walkClip, Random.Range(0.85f, 1.1f));
             }
         }
+    }
+
+    private void OnDrawGizmos(){
+        Gizmos.color = gizmoColor;
+        Gizmos.DrawCube(transform.position+new Vector3(0,0.5f,0), new Vector3(0.4f, 1, 0.4f));
     }
 }
 }

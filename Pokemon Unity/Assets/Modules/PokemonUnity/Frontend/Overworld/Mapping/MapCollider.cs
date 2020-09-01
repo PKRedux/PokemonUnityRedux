@@ -10,15 +10,17 @@ public class MapCollider : MonoBehaviour
     //Collision Map String provided by DeKay's Collision Map Compiler for Pokémon Essentials
     //See TOOLS folder for details
 
-    public string shorthandCollisionMap;
-    public int width;
-    public int length;
+    public string shorthandCollisionMap = "0x4";
+    public int width = 2;
+    public int length = 2;
 
     public int xModifier;
     public int zModifier;
 
     private int[,] collisionMap;
 
+    public bool drawWireframe;
+    public Color wireframeColor = Color.magenta;
 
     void Awake()
     {
@@ -248,6 +250,12 @@ public class MapCollider : MonoBehaviour
         float slope = rise / run;
 
         return Mathf.Round(slope * 100f) / 100f;
+    }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = wireframeColor;
+        if(drawWireframe)
+            Gizmos.DrawWireMesh(GetComponent<MeshFilter>().sharedMesh,-1,transform.position,transform.rotation,transform.localScale);
     }
 }
 }
