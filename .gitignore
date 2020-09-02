@@ -49,3 +49,11 @@ Thumbs.db.meta
 _git-journal
 git-journal.bash-completion
 git-journal.fish
+
+# VEGAS generated files
+*.sfk
+*.sfl
+
+# Source files
+*.pdn
+*.veg

@@ -13,8 +13,8 @@ public class Tile
 }
 class MapEditor : EditorWindow
 {
-    public bool noPresetTile = false;
     public enum PresetTiles {
+        None,
         Blank,
         Dirt,
         Grass1,
@@ -86,6 +86,7 @@ class MapEditor : EditorWindow
     static void Init()
     {
         MapEditor window = (MapEditor)EditorWindow.GetWindow( typeof( MapEditor ), false, "Map Editor", true );
+        window.autoRepaintOnSceneChange = true;
         window.Show();
     }
     void AddTileItem(GenericMenu menu, string menuPath, Tile tile)
@@ -127,36 +128,55 @@ class MapEditor : EditorWindow
                         Renderer renderer = selectedTile.GetComponent<Renderer>();
                         Material[] mat = renderer.sharedMaterials;
                         if(meshFilter.sharedMesh.name.Contains("cliff") && mat.Length == 2)
-                        {
                             mat[0] = (Material)EditorGUILayout.ObjectField("Cliff Mat",renderer.sharedMaterials[0],typeof(Material),false);
-                        }
                         else if(meshFilter.sharedMesh.name.Contains("stair"))
                             mat[0] = (Material)EditorGUILayout.ObjectField("Stair Mat",renderer.sharedMaterials[0],typeof(Material),false);
-                        if(selTile != null) {
-                            for(int i = mat.Length;i < selTile.materials.Length;i++)
+                        if(selTile != null && mat != null) {
+                            if(selTile.materials != null)
                             {
-                                mat[i] = selTile.materials[i];
-                                selTile = null;
-                            }
-                        }
-                        bool found = false;
-                        for(int i = 0; i < mat.Length; i++)
-                        {
-                            if(found)
-                                break;
-                            for(int e = 0; e < castedPresets.Length; e++)
-                            {
-                                if(mat[i].name == castedPresets[e])
+                                for(int i = mat.Length;i < selTile.materials.Length;i++)
                                 {
-                                    found = true;
-                                    matInt = i;
-                                    if(firstRun)
-                                        preset = (PresetTiles)e;
-                                    break;
+                                    mat[i] = selTile.materials[i];
+                                    selTile = null;
                                 }
                             }
                         }
-                        if(noPresetTile)
+                        bool found = false;
+                        if(mat.Length > 0)
+                        {
+                            for(int i = 0; i < mat.Length; i++)
+                            {
+                                if(found)
+                                    break;
+                                for(int e = 0; e < castedPresets.Length; e++)
+                                {
+                                    if(mat[i] != null)
+                                    {
+                                        if(mat[i].name == castedPresets[e])
+                                        {
+                                            found = true;
+                                            matInt = i;
+                                            if(firstRun)
+                                                preset = (PresetTiles)e;
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        found = true;
+                                        if(firstRun)
+                                            preset = PresetTiles.None;
+                                        matInt = i;
+                                    }
+                                }
+                                if(!found)
+                                {
+                                    if(firstRun)
+                                        preset = PresetTiles.None;
+                                } 
+                            }
+                        }
+                        if(preset == PresetTiles.None)
                         {
                             if(meshFilter.sharedMesh.name == "tile" && mat.Length == 1)
                                 mat[0] = (Material)EditorGUILayout.ObjectField("Tile Mat",renderer.sharedMaterials[0],typeof(Material),false);
@@ -165,22 +185,21 @@ class MapEditor : EditorWindow
                             else if(meshFilter.sharedMesh.name == "stairDirt" && mat.Length == 2)
                                 mat[1] = (Material)EditorGUILayout.ObjectField("Side Mat",renderer.sharedMaterials[1],typeof(Material),false);
                         }
-                        else if(matInt < mat.Length && matInt >= 0)
+                        if(matInt < mat.Length && matInt >= 0)
                         {
                             if(!firstRun)
                                 mat[matInt] = (Material)AssetDatabase.LoadAssetAtPath("Assets/MapCreation/Materials/"+castedPresets[(int)preset]+".mat", typeof(Material));
                         }
-                        else if(matInt < 0 || matInt >= mat.Length)
+                        else if((matInt < 0 || matInt >= mat.Length) && preset != PresetTiles.None)
                         {
                             matInt = EditorGUILayout.IntField("Mat Element",matInt);
                         }
                         firstRun = true;
                         PresetTiles oldpreset = preset;
-                        if(!noPresetTile)
+                        if(meshFilter.sharedMesh.name != "stairRail")
                             preset = (PresetTiles)EditorGUILayout.EnumPopup("Tile Preset",preset);
                         if(oldpreset != preset)
                             firstRun = false;
-                        noPresetTile = EditorGUILayout.Toggle("Use Non-Preset",noPresetTile);
                         if(GUILayout.Button("Select Setups"))
                         {
                             GenericMenu menu = new GenericMenu();
