@@ -30,14 +30,13 @@ public class AutoSnap : EditorWindow
     private const string snapValueZKey        = "AutoSnap_snapValueZKey";
     private const string snapRotateValueKey = "AutoSnap_snapRotateValueKey";
 
-    [MenuItem( "Edit/Auto Snap %_l" )]
+    [MenuItem( "Pokémon Unity/Auto Snap %_l" )]
     
     static void Init()
     {
         // Debug.Log("AutoSnap: Init");
         
-        AutoSnap window = (AutoSnap)EditorWindow.GetWindow( typeof( AutoSnap ) );
-        window.maxSize = new Vector2( 200, 125 );
+        AutoSnap window = (AutoSnap)EditorWindow.GetWindow( typeof( AutoSnap ), false, "Auto Snap", true  );
         window.Show();
     }
     

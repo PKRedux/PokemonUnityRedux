@@ -10,6 +10,7 @@ public class Tile
     public Material[] materials;
     public AudioClip footstepSound;
     public Color footstepGizmo;
+    public bool footstepAnyObject;
 }
 class MapEditor : EditorWindow
 {
@@ -72,16 +73,18 @@ class MapEditor : EditorWindow
         "umbragrass4",
         "umbragrass5" //add new preset material names after this
     };
+    Vector2 scrollPos;
     PresetTiles preset;
-    int matInt = -1;
+    int matInt = 0;
     bool firstRun = true;
     [SerializeField]
     GameObject gridPrefab;
     GameObject selectedMap;
     GameObject selectedTile;
     public Tile[] setupTiles;
-    private SerializedProperty encountersProp;
-    public Tile selTile;
+    [SerializeField]
+    public Tile selTile1 = null;
+    public Tile selTile2 = null;
     [MenuItem( "Pokémon Unity/Map Editor %#e" )]
     static void Init()
     {
@@ -89,21 +92,30 @@ class MapEditor : EditorWindow
         window.autoRepaintOnSceneChange = true;
         window.Show();
     }
-    void AddTileItem(GenericMenu menu, string menuPath, Tile tile)
+    void AddTileItem1(GenericMenu menu, string menuPath, Tile tile)
     {
-        menu.AddItem(new GUIContent(menuPath), selTile.Equals(tile), OnSelected, tile);
+        menu.AddItem(new GUIContent(menuPath), selTile1 == tile, OnSelected1, tile);
     }
-    void OnSelected(object tile)
+    void AddTileItem2(GenericMenu menu, string menuPath, Tile tile)
     {
-        selTile = (Tile)tile;
+        menu.AddItem(new GUIContent(menuPath), selTile2 == tile, OnSelected2, tile);
+    }
+    void OnSelected1(object tile)
+    {
+        selTile1 = (Tile)tile;
+    }
+    void OnSelected2(object tile)
+    {
+        selTile2 = (Tile)tile;
     }
     void OnGUI()
     {
+        scrollPos =  EditorGUILayout.BeginScrollView(scrollPos);
         SerializedObject serializedThis = new SerializedObject(this);
         selectedMap = Selection.activeGameObject;
         selectedTile = Selection.activeGameObject;
         EditorGUILayout.LabelField("Map Editor:", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedThis.FindProperty("setupTiles"),new GUIContent("Tile Setup"),true);
+        EditorGUILayout.PropertyField(serializedThis.FindProperty("setupTiles"),new GUIContent("Setup Tiles"),true);
         if(GUILayout.Button("Toggle Grid"))
         {
             if(GameObject.Find("TempMapEditorGrid") != null)
@@ -116,158 +128,199 @@ class MapEditor : EditorWindow
         }
         if(selectedTile != null)
         {
-            if(Selection.gameObjects.Length == 1)
+            if(Selection.activeGameObject.scene.name != null)
             {
-                if(selectedTile.GetComponent<Renderer>() != null)
+                if(Selection.gameObjects.Length == 1)
                 {
-                    if(selectedTile.GetComponent<MeshFilter>() != null)
+                    if(selectedTile.GetComponent<Renderer>() != null)
                     {
-                        EditorGUILayout.Separator();
-                        EditorGUILayout.LabelField("Tile Editor:", EditorStyles.boldLabel);
-                        MeshFilter meshFilter = selectedTile.GetComponent<MeshFilter>();
-                        Renderer renderer = selectedTile.GetComponent<Renderer>();
-                        Material[] mat = renderer.sharedMaterials;
-                        if(meshFilter.sharedMesh.name.Contains("cliff") && mat.Length == 2)
-                            mat[0] = (Material)EditorGUILayout.ObjectField("Cliff Mat",renderer.sharedMaterials[0],typeof(Material),false);
-                        else if(meshFilter.sharedMesh.name.Contains("stair"))
-                            mat[0] = (Material)EditorGUILayout.ObjectField("Stair Mat",renderer.sharedMaterials[0],typeof(Material),false);
-                        if(selTile != null && mat != null) {
-                            if(selTile.materials != null)
-                            {
-                                for(int i = mat.Length;i < selTile.materials.Length;i++)
-                                {
-                                    mat[i] = selTile.materials[i];
-                                    selTile = null;
-                                }
-                            }
-                        }
-                        bool found = false;
-                        if(mat.Length > 0)
+                        if(selectedTile.GetComponent<MeshFilter>() != null)
                         {
-                            for(int i = 0; i < mat.Length; i++)
+                            EditorGUILayout.Separator();
+                            EditorGUILayout.LabelField("Tile Editor:", EditorStyles.boldLabel);
+                            MeshFilter meshFilter = selectedTile.GetComponent<MeshFilter>();
+                            Renderer renderer = selectedTile.GetComponent<Renderer>();
+                            Material[] mat = renderer.sharedMaterials;
+                            if(meshFilter.sharedMesh.name.Contains("cliff") && mat.Length == 2)
+                                mat[0] = (Material)EditorGUILayout.ObjectField("Cliff Mat",renderer.sharedMaterials[0],typeof(Material),false);
+                            else if(meshFilter.sharedMesh.name.Contains("stair"))
+                                mat[0] = (Material)EditorGUILayout.ObjectField("Stair Mat",renderer.sharedMaterials[0],typeof(Material),false);
+                            bool found = false;
+                            if(mat.Length > 0)
                             {
-                                if(found)
-                                    break;
-                                for(int e = 0; e < castedPresets.Length; e++)
+                                for(int i = 0; i < mat.Length; i++)
                                 {
-                                    if(mat[i] != null)
+                                    if(found)
+                                        break;
+                                    for(int e = 0; e < castedPresets.Length; e++)
                                     {
-                                        if(mat[i].name == castedPresets[e])
+                                        if(mat[i] != null)
+                                        {
+                                            if(mat[i].name == castedPresets[e])
+                                            {
+                                                found = true;
+                                                matInt = i;
+                                                if(firstRun)
+                                                    preset = (PresetTiles)e;
+                                                break;
+                                            }
+                                        }
+                                        else
                                         {
                                             found = true;
-                                            matInt = i;
                                             if(firstRun)
-                                                preset = (PresetTiles)e;
-                                            break;
+                                                preset = PresetTiles.None;
                                         }
                                     }
-                                    else
+                                    if(!found)
                                     {
-                                        found = true;
                                         if(firstRun)
                                             preset = PresetTiles.None;
-                                        matInt = i;
+                                    } 
+                                }
+                            }
+                            if(preset == PresetTiles.None)
+                            {
+                                if(meshFilter.sharedMesh.name == "tile" && mat.Length == 1)
+                                    mat[0] = (Material)EditorGUILayout.ObjectField("Tile Mat",renderer.sharedMaterials[0],typeof(Material),false);
+                                else if(meshFilter.sharedMesh.name.Contains("cliff") && mat.Length == 2)
+                                    mat[1] = (Material)EditorGUILayout.ObjectField("Overlay Mat",renderer.sharedMaterials[1],typeof(Material),false);
+                                else if(meshFilter.sharedMesh.name == "stairDirt" && mat.Length == 2)
+                                    mat[1] = (Material)EditorGUILayout.ObjectField("Side Mat",renderer.sharedMaterials[1],typeof(Material),false);
+                            }
+                            if(matInt < mat.Length && matInt >= 0)
+                            {
+                                if(!firstRun)
+                                    mat[matInt] = (Material)AssetDatabase.LoadAssetAtPath("Assets/MapCreation/Materials/"+castedPresets[(int)preset]+".mat", typeof(Material));
+                            }
+                            if((matInt < 0 || matInt >= mat.Length) || preset == PresetTiles.None)
+                            {
+                                matInt = EditorGUILayout.IntField("Mat Element",matInt);
+                            }
+                            firstRun = true;
+                            PresetTiles oldpreset = preset;
+                            if(meshFilter.sharedMesh.name != "stairRail")
+                                preset = (PresetTiles)EditorGUILayout.EnumPopup("Tile Preset",preset);
+                            if(oldpreset != preset)
+                                firstRun = false;
+                            if(selTile1 != null && mat != null) {
+                                if(selTile1.materials != null)
+                                {
+                                    for(int i = mat.Length-1;i < selTile1.materials.Length;i++)
+                                    {
+                                        mat[i] = selTile1.materials[i];
                                     }
                                 }
-                                if(!found)
-                                {
-                                    if(firstRun)
-                                        preset = PresetTiles.None;
-                                } 
+                                selTile1 = null;
                             }
-                        }
-                        if(preset == PresetTiles.None)
-                        {
-                            if(meshFilter.sharedMesh.name == "tile" && mat.Length == 1)
-                                mat[0] = (Material)EditorGUILayout.ObjectField("Tile Mat",renderer.sharedMaterials[0],typeof(Material),false);
-                            else if(meshFilter.sharedMesh.name.Contains("cliff") && mat.Length == 2)
-                                mat[1] = (Material)EditorGUILayout.ObjectField("Overlay Mat",renderer.sharedMaterials[1],typeof(Material),false);
-                            else if(meshFilter.sharedMesh.name == "stairDirt" && mat.Length == 2)
-                                mat[1] = (Material)EditorGUILayout.ObjectField("Side Mat",renderer.sharedMaterials[1],typeof(Material),false);
-                        }
-                        if(matInt < mat.Length && matInt >= 0)
-                        {
-                            if(!firstRun)
-                                mat[matInt] = (Material)AssetDatabase.LoadAssetAtPath("Assets/MapCreation/Materials/"+castedPresets[(int)preset]+".mat", typeof(Material));
-                        }
-                        else if((matInt < 0 || matInt >= mat.Length) && preset != PresetTiles.None)
-                        {
-                            matInt = EditorGUILayout.IntField("Mat Element",matInt);
-                        }
-                        firstRun = true;
-                        PresetTiles oldpreset = preset;
-                        if(meshFilter.sharedMesh.name != "stairRail")
-                            preset = (PresetTiles)EditorGUILayout.EnumPopup("Tile Preset",preset);
-                        if(oldpreset != preset)
-                            firstRun = false;
-                        if(GUILayout.Button("Select Setups"))
-                        {
-                            GenericMenu menu = new GenericMenu();
-                            foreach(Tile tile in setupTiles)
+                            if(setupTiles != null)
                             {
-                                AddTileItem(menu, tile.name, tile);
+                                if(setupTiles.Length > 0)
+                                {
+                                    if(GUILayout.Button("Select Setups"))
+                                    {
+                                        GenericMenu menu = new GenericMenu();
+                                        foreach(Tile tile in setupTiles)
+                                        {
+                                            AddTileItem1(menu, tile.name, tile);
+                                        }
+                                        menu.ShowAsContext();
+                                    }
+                                }
                             }
-                            // display the menu
-                            menu.ShowAsContext();
+                            renderer.sharedMaterials = mat;
                         }
-                        renderer.sharedMaterials = mat;
                     }
-                }
-                if(selectedTile.GetComponent<Footstep>() != null)
-                {
-                    Footstep footstep = selectedTile.GetComponent<Footstep>();
-                    EditorGUILayout.Separator();
-                    EditorGUILayout.LabelField("Footstep Editor:", EditorStyles.boldLabel);
-                    footstep.walkClip = (AudioClip)EditorGUILayout.ObjectField("Footstep",footstep.walkClip,typeof(AudioClip),false);
-                    footstep.gizmoColor = EditorGUILayout.ColorField("Gizmo Color",footstep.gizmoColor);
-                }
-                EditorGUILayout.Separator();
-                if(selectedMap != null)
-                {
-                    if(selectedMap.transform.parent != null)
-                        selectedMap = selectedMap.transform.parent.gameObject;
-                    EditorGUILayout.Separator();
-                    if(selectedMap.GetComponent<MapCollider>() != null)
+                    else if(selectedTile.GetComponent<Footstep>() != null)
                     {
-                        EditorGUILayout.LabelField("Map Collision:", EditorStyles.boldLabel);
-                        MapCollider mapCollider = selectedMap.GetComponent<MapCollider>();
-                        if(GUILayout.Button("Generate Collision Mesh"))
+                        if(selTile2 != null)
                         {
-                            mapCollider.shorthandCollisionMap = "0x4";
-                            mapCollider.width = 2;
-                            mapCollider.length = 2;
-                            MapCompiler.Compile(selectedMap);
+                            if(selTile2.footstepSound == null)
+                                selTile2 = null;
                         }
-                        mapCollider.drawWireframe = EditorGUILayout.Toggle("Wireframe Gizmo",mapCollider.drawWireframe);
-                        mapCollider.wireframeColor = EditorGUILayout.ColorField("Wireframe Color",mapCollider.wireframeColor);
-                    }
-                    EditorGUILayout.Separator();
-                    if(selectedMap.GetComponent<MapSettings>() != null)
-                    {
-                        EditorGUILayout.LabelField("Map Settings:", EditorStyles.boldLabel);
-                        MapSettings mapSettings = selectedMap.GetComponent<MapSettings>();
-                        mapSettings.mapName = EditorGUILayout.TextField(new GUIContent("Map Name"),mapSettings.mapName);
-                        mapSettings.mapNameBoxTexture = (Sprite)EditorGUILayout.ObjectField("Map Name Box Sprite",mapSettings.mapNameBoxTexture,typeof(Sprite),false);
-                        mapSettings.mapNameColor = EditorGUILayout.ColorField("Map Name Color",mapSettings.mapNameColor);
-                        mapSettings.mapBGMClip = (AudioClip)EditorGUILayout.ObjectField("Map BGM",mapSettings.mapBGMClip,typeof(AudioClip),false);
-                        mapSettings.mapBGMNightClip = (AudioClip)EditorGUILayout.ObjectField("Map BGM 2",mapSettings.mapBGMNightClip,typeof(AudioClip),false);
-                        mapSettings.mapBGMLoopStartSamples = EditorGUILayout.IntField("Map BGM Loop Samples",mapSettings.mapBGMLoopStartSamples);
-                        mapSettings.mapBGMNightLoopStartSamples = EditorGUILayout.IntField("Map BGM 2 Loop Samples",mapSettings.mapBGMNightLoopStartSamples);
-                        EditorGUILayout.Space();
-                        mapSettings.environment = (MapSettings.Environment)EditorGUILayout.EnumPopup("Map Environment",mapSettings.environment);
-                        mapSettings.environment2 = (MapSettings.Environment)EditorGUILayout.EnumPopup("Map Environment 2",mapSettings.environment2);
-                        mapSettings.pokemonRarity = (MapSettings.PokemonRarity)EditorGUILayout.EnumPopup("Pokémon Rarity",mapSettings.pokemonRarity);
-                        SerializedObject serializedObject = new SerializedObject(mapSettings);
-                        EditorGUILayout.PropertyField(serializedObject.FindProperty("encounters"),new GUIContent("Map Encounters"),true);
+                        Footstep footstep = selectedTile.GetComponent<Footstep>();
+                        SerializedObject serializedObject = new SerializedObject(footstep);
+                        EditorGUILayout.Separator();
+                        EditorGUILayout.LabelField("Footstep Editor:", EditorStyles.boldLabel);
+                        EditorGUILayout.PropertyField(serializedObject.FindProperty("walkClip"),new GUIContent("Footstep"),true);
+                        EditorGUILayout.PropertyField(serializedObject.FindProperty("gizmoColor"),new GUIContent("Gizmo Color"),true);
+                        EditorGUILayout.PropertyField(serializedObject.FindProperty("stepOnAnyObject"),new GUIContent("Any Object?"),true);
+                        if(selTile2 != null) {
+                            if(selTile2.footstepSound != null)
+                                serializedObject.FindProperty("walkClip").objectReferenceValue = selTile2.footstepSound;
+                            if(selTile2.footstepGizmo != null)
+                                serializedObject.FindProperty("gizmoColor").colorValue = selTile2.footstepGizmo;
+                            serializedObject.FindProperty("stepOnAnyObject").boolValue = selTile2.footstepAnyObject;
+                        }
+                        selTile2 = null;
+                        if(setupTiles != null)
+                        {
+                            if(setupTiles.Length > 0)
+                            {
+                                if(GUILayout.Button("Select Setups"))
+                                {
+                                    GenericMenu menu = new GenericMenu();
+                                    foreach(Tile tile in setupTiles)
+                                    {
+                                        AddTileItem2(menu, tile.name, tile);
+                                    }
+                                    menu.ShowAsContext();
+                                }
+                            }
+                        }
                         serializedObject.ApplyModifiedProperties();
                     }
+                    EditorGUILayout.Separator();
+                    if(selectedMap != null)
+                    {
+                        if(selectedMap.transform.parent != null)
+                            selectedMap = selectedMap.transform.parent.gameObject;
+                        EditorGUILayout.Separator();
+                        if(selectedMap.GetComponent<MapCollider>() != null)
+                        {
+                            EditorGUILayout.LabelField("Map Collision:", EditorStyles.boldLabel);
+                            MapCollider mapCollider = selectedMap.GetComponent<MapCollider>();
+                            if(GUILayout.Button("Generate Collision Mesh"))
+                            {
+                                mapCollider.shorthandCollisionMap = "0x4";
+                                mapCollider.width = 2;
+                                mapCollider.length = 2;
+                                MapCompiler.Compile(selectedMap);
+                            }
+                            mapCollider.drawWireframe = EditorGUILayout.Toggle("Wireframe Gizmo",mapCollider.drawWireframe);
+                            mapCollider.wireframeColor = EditorGUILayout.ColorField("Wireframe Color",mapCollider.wireframeColor);
+                        }
+                        EditorGUILayout.Separator();
+                        if(selectedMap.GetComponent<MapSettings>() != null)
+                        {
+                            EditorGUILayout.LabelField("Map Settings:", EditorStyles.boldLabel);
+                            MapSettings mapSettings = selectedMap.GetComponent<MapSettings>();
+                            mapSettings.mapName = EditorGUILayout.TextField(new GUIContent("Map Name"),mapSettings.mapName);
+                            mapSettings.mapNameBoxTexture = (Sprite)EditorGUILayout.ObjectField("Map Name Box Sprite",mapSettings.mapNameBoxTexture,typeof(Sprite),false);
+                            mapSettings.mapNameColor = EditorGUILayout.ColorField("Map Name Color",mapSettings.mapNameColor);
+                            mapSettings.mapBGMClip = (AudioClip)EditorGUILayout.ObjectField("Map BGM",mapSettings.mapBGMClip,typeof(AudioClip),false);
+                            mapSettings.mapBGMNightClip = (AudioClip)EditorGUILayout.ObjectField("Map BGM 2",mapSettings.mapBGMNightClip,typeof(AudioClip),false);
+                            mapSettings.mapBGMLoopStartSamples = EditorGUILayout.IntField("Map BGM Loop Samples",mapSettings.mapBGMLoopStartSamples);
+                            mapSettings.mapBGMNightLoopStartSamples = EditorGUILayout.IntField("Map BGM 2 Loop Samples",mapSettings.mapBGMNightLoopStartSamples);
+                            EditorGUILayout.Space();
+                            mapSettings.environment = (MapSettings.Environment)EditorGUILayout.EnumPopup("Map Environment",mapSettings.environment);
+                            mapSettings.environment2 = (MapSettings.Environment)EditorGUILayout.EnumPopup("Map Environment 2",mapSettings.environment2);
+                            mapSettings.pokemonRarity = (MapSettings.PokemonRarity)EditorGUILayout.EnumPopup("Pokémon Rarity",mapSettings.pokemonRarity);
+                            SerializedObject serializedObject = new SerializedObject(mapSettings);
+                            EditorGUILayout.PropertyField(serializedObject.FindProperty("encounters"),new GUIContent("Map Encounters"),true);
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    }
                 }
+                else
+                    EditorGUILayout.LabelField("Cannot process multiple selections!", EditorStyles.boldLabel);
             }
             else
-                EditorGUILayout.LabelField("Cannot process multiple selections!", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Cannot process non-scene objects!", EditorStyles.boldLabel);
         }
         else
-            EditorGUILayout.LabelField("No tile or map selected!", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("No tile selected!", EditorStyles.boldLabel);
         serializedThis.ApplyModifiedProperties();
+        EditorGUILayout.EndScrollView();
     }
 }
