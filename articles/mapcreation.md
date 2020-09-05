@@ -5,7 +5,7 @@ Creating a map has gotten a lot more simpler since the older map tutorial videos
 In fact, I created a macro to demonstrate the map editor tools and their capabilities:
 
 <video width="480" height="270"  controls="true" allowfullscreen="true">
-    <source src="/assets/articles/mapcreation/macro.webm" type="video/webm">
+    <source src="PokemonUnityRedux/assets/articles/mapcreation/macro.webm" type="video/webm">
 </video>
 
 !> You can still create maps using the [legacy method](https://www.youtube.com/c/IIcolourSpectrum/videos) as the terrain tag system is still supported.
@@ -131,13 +131,13 @@ While selecting the tile, you can move it using **8 2**↕, **4 6**↔, **＋ �
 
 Here is a GIF explaining the different keys:
 
-<image width="480" height="270" src="/assets/articles/mapcreation/moving-a-tile.gif">
+<image width="480" height="270" src="PokemonUnityRedux/assets/articles/mapcreation/moving-a-tile.gif">
 
 !> It is also possible to click and drag the tile to move it, though you can't ascend or descend the tile this way.
 
 Rotating a tile can be done using **\\** on the numpad or the **SPACE** key:
 
-<image width="480" height="270" src="/assets/articles/mapcreation/rotating-a-tile.gif">
+<image width="480" height="270" src="PokemonUnityRedux/assets/articles/mapcreation/rotating-a-tile.gif">
 
 To duplicate tiles, the shortcut key **CTRL+D** is useful in this sense. You can power though creating maps using the number pad and this shortcut combined.
 
