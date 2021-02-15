@@ -73,7 +73,8 @@ public class PauseScene : BaseScene
         new PositionedImage()
         {
             name = "Pokémon Party",
-            scene = SceneScript.SceneEnum.Party
+            scene = SceneScript.SceneEnum.Party,
+            mode = ImageMode.RunEvent
         },
         new PositionedImage()
         {
@@ -233,7 +234,7 @@ public class PauseScene : BaseScene
                     case ImageMode.RunScene:
                         SfxHandler.Play(setup.selectClip);
                         yield return StartCoroutine(ScreenFade.main.Fade(false, 0.4f));
-                        yield return StartCoroutine(runSceneUntilDeactivated(SceneScript.main.CastToScene(pauseIcons[setup.carousel.position].scene)));
+                        yield return StartCoroutine(runSceneUntilDeactivated(SceneScript.main.CastToScene(pauseIcons[setup.carousel.selectedPosition].scene)));
                         break;
                     case ImageMode.RunEvent:
                         pauseIcons[setup.carousel.position].activatorEvent.Invoke();
@@ -322,7 +323,7 @@ public class PauseScene : BaseScene
     {
         disableAll();
         sceneInterface.gameObject.SetActive(true);
-        sceneInterface.gameObject.SendMessage("control");
+        sceneInterface.gameObject.SendMessage("Control");
         yield return new WaitForSeconds(0.05f);
         while (sceneInterface.gameObject.activeSelf)
         {
