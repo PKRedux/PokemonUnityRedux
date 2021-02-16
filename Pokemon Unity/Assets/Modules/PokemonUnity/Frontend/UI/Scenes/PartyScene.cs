@@ -355,6 +355,7 @@ public class PartyScene : BaseScene
             currentPosition = CANCEL_BUTTON_POSITION;
             UpdateFrames();
             CancelRunning();
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
@@ -375,6 +376,7 @@ public class PartyScene : BaseScene
             else
             {
                 CancelRunning();
+                yield return new WaitForSeconds(0.2f);
             }
         }
         else if (switching)
