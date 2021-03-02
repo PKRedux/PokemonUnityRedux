@@ -104,7 +104,7 @@ public static class PokemonDatabase
             new string[]
             {
                 "Flare Blitz", "Heat Wave", "Dragon Claw", "Air Slash", "Shadow Claw", "Scratch", "Ember", "Growl",
-                "SmokeScreen", "Ember", "Smokescreen", "Dragon Rage", "Scary Face", "Fire Fang", "Flame Burst",
+                "Smokescreen", "Ember", "Smokescreen", "Dragon Rage", "Scary Face", "Fire Fang", "Flame Burst",
                 "Wing Attack", "Slash", "Flamethrower", "Fire Spin", "Inferno", "Heat Wave", "Flare Blitz"
             },
             new string[] {},

@@ -9,6 +9,8 @@ using PokemonUnity.Backend.Datatypes;
 using PokemonUnity.Frontend.Overworld;
 using PokemonUnity.Frontend.Overworld.Mapping;
 using PokemonUnity.Frontend.UI;
+using PokemonUnity.Frontend.UI.Scenes;
+
 namespace PokemonUnity.Frontend.Interacts {
 [RequireComponent(typeof(Trainer))]
 public class InteractTrainer : MonoBehaviour
@@ -82,7 +84,7 @@ public class InteractTrainer : MonoBehaviour
     {
         trainer = transform.GetComponent<Trainer>();
 
-        Dialog = GameObject.Find("GUI").GetComponent<DialogBox>();
+        Dialog = SceneScript.main.Dialog;
 
         sight = transform.Find("Sight");
         sightCollider = sight.GetComponents<BoxCollider>();
@@ -604,7 +606,7 @@ public class InteractTrainer : MonoBehaviour
                 }
 
                 //custom cutouts not yet implemented
-                /*StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
+                StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
 
                 //Automatic LoopStart usage not yet implemented
                 SceneScript.main.Battle.gameObject.SetActive(true);
@@ -621,7 +623,7 @@ public class InteractTrainer : MonoBehaviour
                 yield return new WaitForSeconds(1.6f);
 
                 SceneScript.main.Battle.gameObject.SetActive(true);
-                StartCoroutine(SceneScript.main.Battle.control(trainer));
+                StartCoroutine(SceneScript.main.Battle.Control(trainer));
 
                 while (SceneScript.main.Battle.gameObject.activeSelf)
                 {
@@ -646,7 +648,7 @@ public class InteractTrainer : MonoBehaviour
                         }
                         Dialog.UnDrawDialogBox();
                     }
-                }*/
+                }
             }
             else
             {

@@ -1039,7 +1039,7 @@ public class Player : CharacterBase
                     yield return StartCoroutine(ScreenFade.main.FadeCutout(false, ScreenFade.slowedSpeed, null));
                     //yield return new WaitForSeconds(sceneTransition.FadeOut(1f));
                     SceneScript.main.Battle.gameObject.SetActive(true);
-                    //StartCoroutine(SceneScript.main.Battle.control(accessedMapSettings.getRandomEncounter(encounterLocation)));
+                    StartCoroutine(SceneScript.main.Battle.Control(accessedMapSettings.getRandomEncounter(encounterLocation)));
 
                     while (SceneScript.main.Battle.gameObject.activeSelf)
                     {

@@ -361,10 +361,18 @@ public class Pokemon
         this.PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(this.moveset[i]))
+            if (!string.IsNullOrEmpty(moveset[i]))
             {
-                this.maxPP[i] = MoveDatabase.getMove(this.moveset[i]).getPP();
-                this.PP[i] = this.maxPP[i];
+                var moveData = MoveDatabase.getMove(moveset[i]);
+                if (moveData != null)
+                {
+                    maxPP[i] = moveData.getPP();
+                    PP[i] = maxPP[i];
+                }
+                else
+                {
+                    Debug.Log("no move called " + moveset[i]);
+                }
             }
         }
         packMoveset();
@@ -1643,7 +1651,7 @@ public class Pokemon
         return GetAnimFromID("PokemonBackSprites", pokemonID, gender, isShiny);
     }
 
-    public Texture GetIcons()
+    public Sprite GetIcons()
     {
         return GetIconsFromID(pokemonID, isShiny);
     }
@@ -1694,14 +1702,14 @@ public class Pokemon
         return animation;
     }
 
-    public static Texture GetIconsFromID(int ID, bool isShiny)
+    public static Sprite GetIconsFromID(int ID, bool isShiny)
     {
         string shiny = (isShiny) ? "s" : "";
-        Texture icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID) + shiny);
+        Sprite icons = Resources.Load<Sprite>("PokemonIcons/icon" + convertLongID(ID) + shiny);
         if (icons == null)
         {
             Debug.LogWarning("Shiny Variant NOT Found");
-            icons = Resources.Load<Texture>("PokemonIcons/icon" + convertLongID(ID));
+            icons = Resources.Load<Sprite>("PokemonIcons/icon" + convertLongID(ID));
         }
         return icons;
     }
