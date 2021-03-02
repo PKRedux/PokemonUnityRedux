@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using PokemonUnity.Backend.Serializables;
 namespace PokemonUnity.Backend.Datatypes {
-public class Trainer
+public class Trainer : MonoBehaviour
 {
     public enum Class
     {
@@ -51,8 +51,8 @@ public class Trainer
 
     public Trainer(Pokemon[] party)
     {
-        this.trainerClass = Class.Trainer;
-        this.trainerName = "";
+        trainerClass = Class.Trainer;
+        trainerName = "";
 
         this.party = party;
     }

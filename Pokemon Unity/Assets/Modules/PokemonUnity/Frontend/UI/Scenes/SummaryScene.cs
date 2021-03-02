@@ -11,6 +11,9 @@ using UnityEngine.UI;
 namespace PokemonUnity.Frontend.UI.Scenes {
 public class SummaryScene : BaseScene
 {
+    //TODO
+    public string replacedMove = "";
+
     public IEnumerator control(Pokemon[] pokemonList, int currentPosition = 0, bool learning = false,
         string newMoveString = null)
     {

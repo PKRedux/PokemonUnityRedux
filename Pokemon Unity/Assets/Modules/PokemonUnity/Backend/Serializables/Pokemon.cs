@@ -361,10 +361,18 @@ public class Pokemon
         this.PP = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            if (!string.IsNullOrEmpty(this.moveset[i]))
+            if (!string.IsNullOrEmpty(moveset[i]))
             {
-                this.maxPP[i] = MoveDatabase.getMove(this.moveset[i]).getPP();
-                this.PP[i] = this.maxPP[i];
+                var moveData = MoveDatabase.getMove(moveset[i]);
+                if (moveData != null)
+                {
+                    maxPP[i] = moveData.getPP();
+                    PP[i] = maxPP[i];
+                }
+                else
+                {
+                    Debug.Log("no move called " + moveset[i]);
+                }
             }
         }
         packMoveset();
